@@ -1,65 +1,90 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-lg-8">
+<div class="row justify-content-center" data-aos="fade-up">
+    <div class="col-lg-8 col-md-10">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="fw-bold mb-0"><i class="bi bi-person-circle text-primary me-2"></i> My Profile</h2>
+            <div>
+                <h2 class="fw-bold mb-1 text-dark font-heading">
+                    <i class="bi bi-person-circle text-success me-2"></i> Account Profile
+                </h2>
+                <p class="text-muted small mb-0">Manage your personal information and profile picture.</p>
+            </div>
+            <a href="{{ route('dashboard.settings') }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                <i class="bi bi-shield-lock me-1"></i> Security Settings
+            </a>
         </div>
 
-        <div class="glass-card p-4 p-md-5 border-primary border-opacity-25">
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show rounded-4 fg-card border-success border-opacity-50 mb-4" role="alert">
+                <i class="bi bi-check-circle-fill me-2 text-success"></i> {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+
+        <div class="fg-card p-4 p-md-5 border-emerald-500 border-opacity-30 shadow-sm">
             <div class="text-center mb-5">
                 @if(auth()->user()->avatar)
-                    <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar" class="rounded-circle d-block mx-auto mb-3 border border-secondary" style="width: 100px; height: 100px; object-fit: cover;">
+                    <img src="{{ Storage::url(auth()->user()->avatar) }}" alt="Avatar" class="rounded-circle d-block mx-auto mb-3 border border-2 border-success shadow-sm" style="width: 100px; height: 100px; object-fit: cover;">
                 @else
-                    <div class="bg-gradient-primary rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-lg mx-auto mb-3" style="width: 100px; height: 100px; font-size: 2.5rem; color: white; background: linear-gradient(135deg, #3b82f6, #8b5cf6);">
-                        {{ substr(auth()->user()->name, 0, 1) }}
+                    <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm mx-auto mb-3 text-white" style="width: 90px; height: 90px; font-size: 2.25rem; background: linear-gradient(135deg, var(--fg-orange), var(--fg-orange-hover));">
+                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                     </div>
                 @endif
-                <h4 class="fw-bold text-white">{{ auth()->user()->name }}</h4>
-                <p class="text-muted mb-0">Member since {{ auth()->user()->created_at->format('M Y') }}</p>
-                <div class="mt-2">
-                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill"><i class="bi bi-shield-check me-1"></i> Account Active</span>
+                <h4 class="fw-bold text-dark font-heading mb-1">{{ auth()->user()->name }}</h4>
+                <p class="text-muted small mb-2">Member since {{ auth()->user()->created_at->format('M Y') }} • <span class="text-dark font-monospace">@ {{ auth()->user()->username }}</span></p>
+                <div>
+                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-1.5 rounded-pill text-xs fw-bold">
+                        <i class="bi bi-shield-check me-1"></i> Active Member
+                    </span>
                 </div>
             </div>
 
             <form action="{{ route('dashboard.profile.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
-                <div class="row g-4">
-                    <div class="col-12">
-                        <label class="form-label text-muted small text-uppercase fw-bold">Upload Avatar Profile Picture</label>
-                        <input type="file" name="avatar" class="form-control bg-dark border-secondary text-white" accept="image/*">
+                <div class="row g-3">
+                    <div class="col-12 mb-2">
+                        <label class="form-label text-muted text-xs text-uppercase fw-bold">Upload New Avatar</label>
+                        <input type="file" name="avatar" class="form-control" accept="image/*">
+                        <small class="text-muted text-[11px]">Supported formats: JPG, PNG, WEBP. Max 2MB.</small>
                     </div>
+                    
                     <div class="col-md-6">
-                        <label class="form-label text-muted small text-uppercase fw-bold">Full Name</label>
+                        <label class="form-label text-muted text-xs text-uppercase fw-bold">Full Name</label>
                         <div class="input-group shadow-sm">
-                            <span class="input-group-text bg-dark border-secondary text-primary"><i class="bi bi-person"></i></span>
-                            <input type="text" name="name" class="form-control bg-dark border-secondary text-white" value="{{ auth()->user()->name }}" required>
+                            <span class="input-group-text"><i class="bi bi-person text-success"></i></span>
+                            <input type="text" name="name" class="form-control" value="{{ auth()->user()->name }}" required>
                         </div>
                     </div>
+                    
                     <div class="col-md-6">
-                        <label class="form-label text-muted small text-uppercase fw-bold">Username</label>
+                        <label class="form-label text-muted text-xs text-uppercase fw-bold">Username</label>
                         <div class="input-group shadow-sm">
-                            <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-at"></i></span>
-                            <input type="text" class="form-control bg-dark border-secondary text-muted" value="{{ auth()->user()->username }}" readonly disabled>
+                            <span class="input-group-text"><i class="bi bi-at text-muted"></i></span>
+                            <input type="text" class="form-control bg-light text-muted" value="{{ auth()->user()->username }}" readonly disabled>
                         </div>
                     </div>
+                    
                     <div class="col-md-6">
-                        <label class="form-label text-muted small text-uppercase fw-bold">Email Address</label>
+                        <label class="form-label text-muted text-xs text-uppercase fw-bold">Email Address</label>
                         <div class="input-group shadow-sm">
-                            <span class="input-group-text bg-dark border-secondary text-primary"><i class="bi bi-envelope"></i></span>
-                            <input type="email" name="email" class="form-control bg-dark border-secondary text-white" value="{{ auth()->user()->email }}" required>
+                            <span class="input-group-text"><i class="bi bi-envelope text-success"></i></span>
+                            <input type="email" name="email" class="form-control" value="{{ auth()->user()->email }}" required>
                         </div>
                     </div>
+                    
                     <div class="col-md-6">
-                        <label class="form-label text-muted small text-uppercase fw-bold">Phone Number</label>
+                        <label class="form-label text-muted text-xs text-uppercase fw-bold">Phone Number</label>
                         <div class="input-group shadow-sm">
-                            <span class="input-group-text bg-dark border-secondary text-primary"><i class="bi bi-telephone"></i></span>
-                            <input type="text" name="phone" class="form-control bg-dark border-secondary text-white" value="{{ auth()->user()->phone }}" required>
+                            <span class="input-group-text"><i class="bi bi-telephone text-success"></i></span>
+                            <input type="text" name="phone" class="form-control" value="{{ auth()->user()->phone }}" required>
                         </div>
                     </div>
-                    <div class="col-12 mt-4 pt-3 border-top border-secondary border-opacity-25 text-end">
-                        <button type="submit" class="btn btn-premium px-4"><i class="bi bi-save me-2"></i> Save Changes</button>
+                    
+                    <div class="col-12 mt-4 pt-3 border-top text-end">
+                        <button type="submit" class="btn btn-fg-primary px-4 fw-bold shadow-sm">
+                            <i class="bi bi-check2 me-1"></i> Save Changes
+                        </button>
                     </div>
                 </div>
             </form>

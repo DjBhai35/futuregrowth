@@ -3,26 +3,44 @@
 @section('content')
 <style>
     .metric-group-title {
-        font-size: 0.85rem;
-        letter-spacing: 0.1em;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
-        color: #94a3b8;
-        font-weight: 700;
-        border-left: 3px solid #eab308;
+        color: #475569;
+        font-weight: 800;
+        border-left: 3px solid var(--fg-orange);
         padding-left: 10px;
         margin-bottom: 15px;
-        margin-top: 20px;
+        margin-top: 25px;
+    }
+    .glass-card h2.text-white, .glass-card h3.text-white, .glass-card h4.text-white, .glass-card h5.text-white {
+        color: #0f172a !important;
     }
     .quick-action-btn {
         transition: all 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid #e2e8f0;
+        background: #ffffff;
+        color: #0f172a;
     }
     .quick-action-btn:hover {
         transform: translateY(-2px);
-        background: rgba(234, 179, 8, 0.1);
-        border-color: rgba(234, 179, 8, 0.4);
-        color: #eab308 !important;
+        background: rgba(249, 115, 22, 0.08);
+        border-color: var(--fg-orange);
+        color: var(--fg-orange) !important;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .nav-tabs .nav-link {
+        color: #64748b;
+        font-weight: 600;
+        border: none;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+        padding: 0.75rem 1.25rem;
+    }
+    .nav-tabs .nav-link.active {
+        color: var(--fg-emerald);
+        border-bottom: 2px solid var(--fg-emerald);
+        background: transparent;
     }
 </style>
 

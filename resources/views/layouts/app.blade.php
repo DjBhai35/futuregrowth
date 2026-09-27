@@ -434,6 +434,102 @@
                 display: block;
             }
         }
+        /* Universal Modern Form Controls */
+        .form-control, .form-select {
+            background-color: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #0f172a !important;
+            border-radius: 0.75rem !important;
+            padding: 0.625rem 0.95rem;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--fg-emerald) !important;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15) !important;
+            outline: none;
+        }
+        .form-control::placeholder {
+            color: #94a3b8 !important;
+        }
+        .input-group-text {
+            background-color: #f8fafc !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #64748b !important;
+            border-radius: 0.75rem;
+        }
+        .input-group > .input-group-text:first-child {
+            border-top-right-radius: 0 !important;
+            border-bottom-right-radius: 0 !important;
+        }
+        .input-group > .form-control:not(:first-child) {
+            border-top-left-radius: 0 !important;
+            border-bottom-left-radius: 0 !important;
+        }
+
+        /* Modern Table Harmonization */
+        .table {
+            color: #334155;
+            vertical-align: middle;
+        }
+        .table-dark {
+            background-color: #ffffff !important;
+            color: #1e293b !important;
+            --bs-table-bg: #ffffff;
+            --bs-table-striped-bg: #f8fafc;
+            --bs-table-hover-bg: #f1f5f9;
+            --bs-table-color: #1e293b;
+        }
+        .table-dark th {
+            background-color: #f8fafc !important;
+            color: #64748b !important;
+            font-weight: 700;
+            border-bottom: 1px solid #e2e8f0 !important;
+        }
+        .table-dark td {
+            background-color: transparent !important;
+            color: #1e293b !important;
+            border-bottom: 1px solid #f1f5f9 !important;
+        }
+        .table-dark tbody tr:hover td {
+            background-color: #f8fafc !important;
+        }
+
+        /* Legacy Button Fallbacks */
+        .btn-premium {
+            background: linear-gradient(135deg, var(--fg-orange) 0%, var(--fg-orange-hover) 100%) !important;
+            color: #ffffff !important;
+            font-weight: 700 !important;
+            border: none !important;
+            border-radius: 9999px !important;
+            box-shadow: 0 4px 14px var(--fg-orange-glow);
+            transition: all 0.2s ease;
+        }
+        .btn-premium:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--fg-orange-glow);
+            color: #ffffff !important;
+        }
+
+        /* Responsive Table Container */
+        .table-responsive {
+            border-radius: 0.75rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Modal Harmonization */
+        .modal-content {
+            background-color: #ffffff !important;
+            color: #0f172a !important;
+            border-radius: 1.25rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Smart Text-White Adaptation for Light Canvas */
+        .text-white:not(.btn):not(.btn *):not(.badge):not(.badge *):not(.alert):not(.alert *):not(.salary-hero-card *):not(.app-sidebar *):not(.mobile-bottom-nav *):not(.footer-fg *):not(.plan-badge *) {
+            color: #0f172a !important;
+        }
     </style>
     @stack('styles')
 </head>

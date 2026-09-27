@@ -2,57 +2,93 @@
 
 @section('content')
 <style>
-    .promo-banner { overflow: hidden; white-space: nowrap; background: linear-gradient(90deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1)); border: 1px solid rgba(59,130,246,0.2); padding: 10px 0; border-radius: 12px; }
-    .marquee-content { display: inline-block; animation: marquee 20s linear infinite; }
-    @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-    .marquee-item { display: inline-block; margin-right: 50px; font-weight: 600; font-size: 0.9rem; }
-    
-    .promo-card { transition: transform 0.3s ease; }
-    .promo-card:hover { transform: translateX(5px); }
+    .promo-banner {
+        overflow: hidden;
+        white-space: nowrap;
+        background: #ffffff;
+        border: 1px solid rgba(22, 163, 74, 0.2);
+        padding: 10px 0;
+        border-radius: 9999px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    }
+    .marquee-content {
+        display: inline-block;
+        animation: marquee 22s linear infinite;
+    }
+    @keyframes marquee {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+    .marquee-item {
+        display: inline-block;
+        margin-right: 50px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #334155;
+    }
+    .promo-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .promo-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.08);
+    }
 </style>
 
 <!-- Promotional Marquee -->
-<div class="promo-banner mb-4 text-white" data-aos="fade-down">
+<div class="promo-banner mb-4" data-aos="fade-down">
     <div class="marquee-content">
-        <span class="marquee-item"><i class="bi bi-gift text-warning me-1"></i> {{ setting('promo_banner_1', 'Free $' . setting('signup_bonus', 7) . ' Signup Bonus Available!') }}</span>
-        <span class="marquee-item"><i class="bi bi-rocket-takeoff text-primary me-1"></i> {{ setting('promo_banner_2', 'Build Your Team & Earn up to 10 Levels of Rewards!') }}</span>
+        <span class="marquee-item"><i class="bi bi-gift-fill text-warning me-1"></i> {{ setting('promo_banner_1', 'Free $' . setting('signup_bonus', 7) . ' Signup Bonus Available!') }}</span>
+        <span class="marquee-item"><i class="bi bi-rocket-takeoff-fill text-primary me-1"></i> {{ setting('promo_banner_2', 'Build Your Team & Earn up to 10 Levels of Rewards!') }}</span>
         <span class="marquee-item"><i class="bi bi-graph-up-arrow text-success me-1"></i> {{ setting('promo_banner_3', '3X Return on all Investment Plans!') }}</span>
         <span class="marquee-item"><i class="bi bi-whatsapp text-success me-1"></i> {{ setting('promo_banner_4', 'Join our WhatsApp Community!') }}</span>
     </div>
 </div>
 
-<!-- Tech Particle Background -->
-<div id="tsparticles" class="position-absolute top-0 start-0 w-100 h-100" style="z-index: -1;"></div>
-
-<div class="row align-items-center" style="min-height: 70vh;">
-    <!-- Promotional Left Column -->
-    <div class="col-lg-6 d-none d-lg-block" data-aos="fade-right">
-        <div class="pe-5">
-            <h1 class="fw-bold mb-4">Start Your <span class="text-gradient">Financial Journey</span> Today</h1>
-            <p class="text-muted fs-5 mb-5">Create your free account in seconds and unlock exclusive benefits tailored for early adopters.</p>
+<div class="row align-items-center justify-content-center py-2" style="min-height: 75vh;">
+    <!-- Promotional Left Column (Desktop) -->
+    <div class="col-lg-5 d-none d-lg-block" data-aos="fade-right">
+        <div class="pe-lg-4">
+            <span class="badge bg-warning bg-opacity-15 text-dark border border-warning border-opacity-30 px-3 py-1.5 rounded-pill fw-bold text-xs mb-3">
+                <i class="bi bi-star-fill text-warning me-1"></i> Early Adopter Privilege
+            </span>
+            <h1 class="fw-extrabold mb-3 text-dark font-heading display-6">
+                Start Your <span style="color: var(--fg-orange);">Financial Growth</span> Today
+            </h1>
+            <p class="text-muted fs-6 mb-4">
+                Create your verified account in seconds and unlock automated daily ROI, 20% direct referral rewards, and monthly leadership salary.
+            </p>
             
             <div class="d-flex flex-column gap-3">
-                <div class="glass-card p-3 promo-card d-flex align-items-center border-warning border-opacity-25 neon-glow-primary">
-                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3"><i class="bi bi-gift-fill text-warning fs-4"></i></div>
+                @if(setting('signup_bonus', 7) > 0)
+                <div class="fg-card p-3 promo-card d-flex align-items-center border-warning border-opacity-30">
+                    <div class="bg-warning bg-opacity-15 p-3 rounded-circle me-3 text-warning">
+                        <i class="bi bi-gift-fill fs-4"></i>
+                    </div>
                     <div>
-                        <h5 class="fw-bold text-white mb-1">Claim Your ${{ setting('signup_bonus', 7) }} Bonus</h5>
-                        <p class="text-muted small mb-0">Available for the first {{ setting('max_bonus_users', 1000) }} users who register.</p>
+                        <h6 class="fw-bold text-dark mb-1">Claim Your ${{ setting('signup_bonus', 7) }} Bonus</h6>
+                        <p class="text-muted small mb-0">Credited automatically upon verified registration.</p>
+                    </div>
+                </div>
+                @endif
+                
+                <div class="fg-card p-3 promo-card d-flex align-items-center border-success border-opacity-30">
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3 text-success">
+                        <i class="bi bi-cash-coin fs-4"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-dark mb-1">Instant Daily ROI</h6>
+                        <p class="text-muted small mb-0">Daily returns credited straight to your ROI wallet every 24 hours.</p>
                     </div>
                 </div>
                 
-                <div class="glass-card p-3 promo-card d-flex align-items-center border-success border-opacity-25">
-                    <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3"><i class="bi bi-cash-coin text-success fs-4"></i></div>
-                    <div>
-                        <h5 class="fw-bold text-white mb-1">Instant Daily ROI</h5>
-                        <p class="text-muted small mb-0">Profits distributed directly to your wallet every 24 hours.</p>
+                <div class="fg-card p-3 promo-card d-flex align-items-center border-info border-opacity-30">
+                    <div class="bg-info bg-opacity-10 p-3 rounded-circle me-3 text-info">
+                        <i class="bi bi-diagram-3-fill fs-4"></i>
                     </div>
-                </div>
-                
-                <div class="glass-card p-3 promo-card d-flex align-items-center border-info border-opacity-25">
-                    <div class="bg-info bg-opacity-10 p-3 rounded-circle me-3"><i class="bi bi-diagram-3-fill text-info fs-4"></i></div>
                     <div>
-                        <h5 class="fw-bold text-white mb-1">10-Level Team Rewards</h5>
-                        <p class="text-muted small mb-0">Earn up to {{ setting('direct_reward_percent', 20) }}% direct commission instantly on referrals.</p>
+                        <h6 class="fw-bold text-dark mb-1">10-Level Matrix & Leadership Salary</h6>
+                        <p class="text-muted small mb-0">20% direct commission + up to $300/month recurring salary.</p>
                     </div>
                 </div>
             </div>
@@ -60,136 +96,104 @@
     </div>
     
     <!-- Registration Form Column -->
-    <div class="col-lg-6" data-aos="fade-left">
-        <div class="glass-card p-4 p-md-5 border-success border-opacity-50 position-relative">
-            <div class="position-absolute top-0 end-0 p-3 opacity-10">
-                <i class="bi bi-person-plus display-1 text-success"></i>
+    <div class="col-lg-6 col-md-10 col-12" data-aos="fade-left">
+        <div class="fg-card p-4 p-md-5 border-emerald-500 border-opacity-30 position-relative shadow-lg">
+            <div class="text-center mb-4">
+                <div class="d-inline-flex p-3 rounded-circle bg-success bg-opacity-10 text-success mb-2">
+                    <i class="bi bi-person-plus-fill fs-2"></i>
+                </div>
+                <h3 class="fw-bold text-dark font-heading mb-1">Create Account</h3>
+                <p class="text-muted small">Join the high-growth USDT investment platform</p>
             </div>
-            
-            <div class="text-center mb-4 position-relative">
-                <h3 class="fw-bold text-white">Create Account</h3>
-                <p class="text-muted">Join the most secure USDT investment platform</p>
-            </div>
+
+            @if($errors->any())
+                <div class="alert alert-danger small rounded-3 py-2 px-3 mb-3">
+                    <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ $errors->first() }}
+                </div>
+            @endif
 
             <form method="POST" action="{{ route('register') }}">
                 @csrf
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label text-muted small text-uppercase fw-bold">Full Name</label>
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label class="form-label text-muted text-xs text-uppercase fw-bold">Full Name</label>
                         <div class="input-group shadow-sm">
-                            <span class="input-group-text bg-dark border-secondary text-primary"><i class="bi bi-person"></i></span>
-                            <input type="text" name="name" class="form-control bg-dark border-secondary text-white" required>
+                            <span class="input-group-text"><i class="bi bi-person text-success"></i></span>
+                            <input type="text" name="name" value="{{ old('name') }}" class="form-control" placeholder="John Doe" required>
                         </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label text-muted small text-uppercase fw-bold">Username</label>
+                    <div class="col-sm-6">
+                        <label class="form-label text-muted text-xs text-uppercase fw-bold">Username</label>
                         <div class="input-group shadow-sm">
-                            <span class="input-group-text bg-dark border-secondary text-primary"><i class="bi bi-at"></i></span>
-                            <input type="text" name="username" class="form-control bg-dark border-secondary text-white" required>
+                            <span class="input-group-text"><i class="bi bi-at text-success"></i></span>
+                            <input type="text" name="username" value="{{ old('username') }}" class="form-control" placeholder="johndoe12" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label class="form-label text-muted text-xs text-uppercase fw-bold">Email Address</label>
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text"><i class="bi bi-envelope text-success"></i></span>
+                            <input type="email" name="email" value="{{ old('email') }}" class="form-control" placeholder="name@example.com" required>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label text-muted text-xs text-uppercase fw-bold">Phone Number</label>
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text"><i class="bi bi-telephone text-success"></i></span>
+                            <input type="text" name="phone" value="{{ old('phone') }}" class="form-control" placeholder="+123456789" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                        <label class="form-label text-muted text-xs text-uppercase fw-bold">Password</label>
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text"><i class="bi bi-lock text-success"></i></span>
+                            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="form-label text-muted text-xs text-uppercase fw-bold">Confirm Password</label>
+                        <div class="input-group shadow-sm">
+                            <span class="input-group-text"><i class="bi bi-shield-check text-success"></i></span>
+                            <input type="password" name="password_confirmation" class="form-control" placeholder="••••••••" required>
                         </div>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label text-muted small text-uppercase fw-bold">Email Address</label>
+                    <label class="form-label text-muted text-xs text-uppercase fw-bold">Referral Code (Optional)</label>
                     <div class="input-group shadow-sm">
-                        <span class="input-group-text bg-dark border-secondary text-primary"><i class="bi bi-envelope"></i></span>
-                        <input type="email" name="email" class="form-control bg-dark border-secondary text-white" required>
-                    </div>
-                </div>
-                
-                <div class="mb-3">
-                    <label class="form-label text-muted small text-uppercase fw-bold">Phone Number</label>
-                    <div class="input-group shadow-sm">
-                        <span class="input-group-text bg-dark border-secondary text-primary"><i class="bi bi-telephone"></i></span>
-                        <input type="text" name="phone" class="form-control bg-dark border-secondary text-white" required>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label text-muted small text-uppercase fw-bold">Password</label>
-                        <div class="input-group shadow-sm">
-                            <span class="input-group-text bg-dark border-secondary text-primary"><i class="bi bi-lock"></i></span>
-                            <input type="password" name="password" class="form-control bg-dark border-secondary text-white" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label text-muted small text-uppercase fw-bold">Confirm</label>
-                        <div class="input-group shadow-sm">
-                            <span class="input-group-text bg-dark border-secondary text-primary"><i class="bi bi-shield-lock"></i></span>
-                            <input type="password" name="password_confirmation" class="form-control bg-dark border-secondary text-white" required>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label text-muted small text-uppercase fw-bold">Referral Code (Optional)</label>
-                    <div class="input-group shadow-sm">
-                        <span class="input-group-text bg-dark border-secondary text-info"><i class="bi bi-link-45deg"></i></span>
-                        <input type="text" name="referral_code" value="{{ $ref ?? '' }}" class="form-control bg-dark border-secondary text-info fw-bold" {{ isset($ref) ? 'readonly' : '' }} placeholder="Enter code if you have one">
+                        <span class="input-group-text"><i class="bi bi-link-45deg text-warning"></i></span>
+                        <input type="text" name="referral_code" value="{{ $ref ?? old('referral_code', '') }}" class="form-control fw-bold" {{ isset($ref) ? 'readonly' : '' }} placeholder="Enter sponsor referral code">
                     </div>
                 </div>
 
                 @if(setting('enable_recaptcha', false))
-                <div class="mb-4 d-flex justify-content-center">
-                    <div class="g-recaptcha" data-sitekey="{{ setting('recaptcha_site_key') }}" data-theme="dark"></div>
+                <div class="mb-3 d-flex justify-content-center">
+                    <div class="g-recaptcha" data-sitekey="{{ setting('recaptcha_site_key') }}"></div>
                 </div>
                 @endif
 
-                <button type="submit" class="btn btn-premium w-100 mb-3 py-3 fs-5 btn-pulse shadow-lg">Create Account <i class="bi bi-arrow-right ms-2"></i></button>
+                <button type="submit" class="btn btn-fg-primary w-100 py-2.5 fs-6 fw-bold shadow-md mt-2">
+                    <i class="bi bi-check2-circle me-1"></i> Register Free Account
+                </button>
                 
-                <div class="text-center mt-3">
-                    <span class="text-muted small">Already have an account?</span> 
-                    <a href="{{ route('login') }}" class="text-primary fw-bold text-decoration-none fs-6 ms-1">Sign In Here</a>
+                <div class="text-center mt-3 pt-2 border-top">
+                    <span class="text-muted small">Already registered?</span> 
+                    <a href="{{ route('login') }}" class="text-success fw-bold text-decoration-none fs-6 ms-1">
+                        Sign In Here <i class="bi bi-arrow-right"></i>
+                    </a>
                 </div>
             </form>
         </div>
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<!-- tsParticles Engine -->
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-engine@2/tsparticles.engine.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-basic@2/tsparticles.basic.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-interaction-particles-links@2/tsparticles.interaction.particles.links.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-move-base@2/tsparticles.move.base.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-shape-circle@2/tsparticles.shape.circle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-updater-color@2/tsparticles.updater.color.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-updater-opacity@2/tsparticles.updater.opacity.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-updater-size@2/tsparticles.updater.size.min.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', async function () {
-    await loadBaseMover(tsParticles);
-    await loadCircleShape(tsParticles);
-    await loadColorUpdater(tsParticles);
-    await loadOpacityUpdater(tsParticles);
-    await loadSizeUpdater(tsParticles);
-    await loadParticlesLinksInteraction(tsParticles);
-    await loadBasic(tsParticles);
-
-    tsParticles.load("tsparticles", {
-        fpsLimit: 60,
-        particles: {
-            number: { value: 80, density: { enable: true, value_area: 800 } },
-            color: { value: ["#3b82f6", "#8b5cf6", "#10b981", "#38bdf8"] },
-            links: { enable: true, color: "#3b82f6", distance: 150, opacity: 0.6, width: 2 },
-            move: { enable: true, speed: 1.5, direction: "none", random: true, straight: false, outModes: { default: "bounce" } },
-            size: { value: { min: 2, max: 5 } },
-            opacity: { value: { min: 0.3, max: 0.8 }, animation: { enable: true, speed: 1, minimumValue: 0.3 } }
-        },
-        interactivity: {
-            detectsOn: "canvas",
-            events: { onHover: { enable: true, mode: "grab" }, resize: true },
-            modes: { grab: { distance: 140, links: { opacity: 0.5 } } }
-        },
-        retina_detect: true
-    });
-});
-</script>
-@endpush
 
 @if(setting('enable_recaptcha', false))
 @push('scripts')
