@@ -73,7 +73,7 @@
                 <div class="d-flex justify-content-between mb-2"><span class="text-muted small">Current Sponsor:</span> <strong class="text-white">{{ $selectedUser->referrer ? $selectedUser->referrer->name . ' (@' . $selectedUser->referrer->username . ')' : 'None' }}</strong></div>
                 <div class="d-flex justify-content-between mb-2"><span class="text-muted small">Total Directs:</span> <strong class="text-white">{{ \App\Models\User::where('referred_by', $selectedUser->id)->count() }}</strong></div>
                 <div class="d-flex justify-content-between mb-2"><span class="text-muted small">Status:</span> <span class="badge bg-{{ $selectedUser->status === 'active' ? 'success' : 'danger' }}">{{ ucfirst($selectedUser->status) }}</span></div>
-                <div class="d-flex justify-content-between mb-2"><span class="text-muted small">Wallet Balance:</span> <strong class="text-success">${{ number_format($selectedUser->wallet->deposit_balance + $selectedUser->wallet->roi_balance + $selectedUser->wallet->referral_balance + $selectedUser->wallet->bonus_balance, 2) }}</strong></div>
+                <div class="d-flex justify-content-between mb-2"><span class="text-muted small">Wallet Balance:</span> <strong class="text-success">${{ number_format($selectedUser->wallet ? ($selectedUser->wallet->deposit_balance + $selectedUser->wallet->roi_balance + $selectedUser->wallet->referral_balance + $selectedUser->wallet->bonus_balance) : 0, 2) }}</strong></div>
             </div>
 
             <hr class="border-secondary my-3">
@@ -169,7 +169,7 @@
                                                     </td>
                                                     <td class="text-muted">{{ $user->created_at->format('M d, Y') }}</td>
                                                     <td><span class="badge bg-{{ $user->status === 'active' ? 'success' : 'danger' }}">{{ ucfirst($user->status) }}</span></td>
-                                                    <td class="fw-bold text-white">${{ number_format($user->wallet->deposit_balance + $user->wallet->roi_balance + $user->wallet->referral_balance + $user->wallet->bonus_balance, 2) }}</td>
+                                                    <td class="fw-bold text-white">${{ number_format($user->wallet ? ($user->wallet->deposit_balance + $user->wallet->roi_balance + $user->wallet->referral_balance + $user->wallet->bonus_balance) : 0, 2) }}</td>
                                                     <td class="text-success">${{ number_format($user->total_dep, 0) }}</td>
                                                     <td class="text-danger">${{ number_format($user->total_with, 0) }}</td>
                                                     <td class="text-warning">${{ number_format($user->total_earned_roi, 0) }}</td>

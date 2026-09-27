@@ -86,48 +86,48 @@
                 <h5 class="fw-bold mb-3 text-success border-bottom border-secondary pb-2">Referral Commissions (%)</h5>
                 <div class="mb-3">
                     <label class="form-label text-muted small text-warning">Direct Reward (Instant)</label>
-                    <input type="number" step="0.1" name="direct_reward_percent" class="form-control bg-dark border-warning text-white" value="{{ $settings['direct_reward_percent']->value ?? 20 }}">
+                    <input type="number" step="0.1" name="direct_reward_percent" class="form-control bg-dark border-warning text-white" value="{{ setting('direct_reward_percent', 20) }}">
                 </div>
                 <div class="row">
                     <div class="col-6 mb-2">
                         <label class="form-label text-muted small">Level 1</label>
-                        <input type="number" step="0.1" name="referral_level_1" class="form-control bg-dark border-secondary text-white" value="{{ $settings['referral_level_1']->value ?? 5 }}">
+                        <input type="number" step="0.1" name="referral_level_1" class="form-control bg-dark border-secondary text-white" value="{{ setting('referral_level_1', 5) }}">
                     </div>
                     <div class="col-6 mb-2">
                         <label class="form-label text-muted small">Level 2</label>
-                        <input type="number" step="0.1" name="referral_level_2" class="form-control bg-dark border-secondary text-white" value="{{ $settings['referral_level_2']->value ?? 4 }}">
+                        <input type="number" step="0.1" name="referral_level_2" class="form-control bg-dark border-secondary text-white" value="{{ setting('referral_level_2', 4) }}">
                     </div>
                     <div class="col-6 mb-2">
                         <label class="form-label text-muted small">Level 3</label>
-                        <input type="number" step="0.1" name="referral_level_3" class="form-control bg-dark border-secondary text-white" value="{{ $settings['referral_level_3']->value ?? 3 }}">
+                        <input type="number" step="0.1" name="referral_level_3" class="form-control bg-dark border-secondary text-white" value="{{ setting('referral_level_3', 3) }}">
                     </div>
                     <div class="col-6 mb-2">
                         <label class="form-label text-muted small">Level 4</label>
-                        <input type="number" step="0.1" name="referral_level_4" class="form-control bg-dark border-secondary text-white" value="{{ $settings['referral_level_4']->value ?? 3 }}">
+                        <input type="number" step="0.1" name="referral_level_4" class="form-control bg-dark border-secondary text-white" value="{{ setting('referral_level_4', 3) }}">
                     </div>
                     <div class="col-6 mb-2">
                         <label class="form-label text-muted small">Level 5</label>
-                        <input type="number" step="0.1" name="referral_level_5" class="form-control bg-dark border-secondary text-white" value="{{ $settings['referral_level_5']->value ?? 2 }}">
+                        <input type="number" step="0.1" name="referral_level_5" class="form-control bg-dark border-secondary text-white" value="{{ setting('referral_level_5', 2) }}">
                     </div>
                     <div class="col-6 mb-2">
                         <label class="form-label text-muted small">Level 6</label>
-                        <input type="number" step="0.1" name="referral_level_6" class="form-control bg-dark border-secondary text-white" value="{{ $settings['referral_level_6']->value ?? 2 }}">
+                        <input type="number" step="0.1" name="referral_level_6" class="form-control bg-dark border-secondary text-white" value="{{ setting('referral_level_6', 2) }}">
                     </div>
                     <div class="col-6 mb-2">
                         <label class="form-label text-muted small">Level 7</label>
-                        <input type="number" step="0.1" name="referral_level_7" class="form-control bg-dark border-secondary text-white" value="{{ $settings['referral_level_7']->value ?? 1 }}">
+                        <input type="number" step="0.1" name="referral_level_7" class="form-control bg-dark border-secondary text-white" value="{{ setting('referral_level_7', 1) }}">
                     </div>
                     <div class="col-6 mb-2">
                         <label class="form-label text-muted small">Level 8</label>
-                        <input type="number" step="0.1" name="referral_level_8" class="form-control bg-dark border-secondary text-white" value="{{ $settings['referral_level_8']->value ?? 1 }}">
+                        <input type="number" step="0.1" name="referral_level_8" class="form-control bg-dark border-secondary text-white" value="{{ setting('referral_level_8', 1) }}">
                     </div>
                     <div class="col-6 mb-2">
                         <label class="form-label text-muted small">Level 9</label>
-                        <input type="number" step="0.1" name="referral_level_9" class="form-control bg-dark border-secondary text-white" value="{{ $settings['referral_level_9']->value ?? 1 }}">
+                        <input type="number" step="0.1" name="referral_level_9" class="form-control bg-dark border-secondary text-white" value="{{ setting('referral_level_9', 1) }}">
                     </div>
                     <div class="col-6 mb-2">
                         <label class="form-label text-muted small">Level 10</label>
-                        <input type="number" step="0.1" name="referral_level_10" class="form-control bg-dark border-secondary text-white" value="{{ $settings['referral_level_10']->value ?? 1 }}">
+                        <input type="number" step="0.1" name="referral_level_10" class="form-control bg-dark border-secondary text-white" value="{{ setting('referral_level_10', 1) }}">
                     </div>
                 </div>
             </div>
@@ -248,19 +248,19 @@
                 <h5 class="fw-bold mb-3 text-primary border-bottom border-secondary pb-2">Promotional Banners</h5>
                 <div class="mb-3">
                     <label class="form-label text-muted small">Promo Banner 1 (e.g. Signup Bonus)</label>
-                    <input type="text" name="promo_banner_1" class="form-control bg-dark border-secondary text-white" value="{{ $settings['promo_banner_1']->value ?? 'Free $' . setting('signup_bonus', 7) . ' Signup Bonus Available!' }}">
+                    <input type="text" name="promo_banner_1" class="form-control bg-dark border-secondary text-white" value="{{ setting('promo_banner_1', 'Free $' . setting('signup_bonus', 7) . ' Signup Bonus Available!') }}">
                 </div>
                 <div class="mb-3">
                     <label class="form-label text-muted small">Promo Banner 2 (e.g. Team Rewards)</label>
-                    <input type="text" name="promo_banner_2" class="form-control bg-dark border-secondary text-white" value="{{ $settings['promo_banner_2']->value ?? 'Build Your Team & Earn up to 10 Levels of Rewards!' }}">
+                    <input type="text" name="promo_banner_2" class="form-control bg-dark border-secondary text-white" value="{{ setting('promo_banner_2', 'Build Your Team & Earn up to 10 Levels of Rewards!') }}">
                 </div>
                 <div class="mb-3">
                     <label class="form-label text-muted small">Promo Banner 3 (e.g. ROI / Limits)</label>
-                    <input type="text" name="promo_banner_3" class="form-control bg-dark border-secondary text-white" value="{{ $settings['promo_banner_3']->value ?? '3X Return on all Investment Plans!' }}">
+                    <input type="text" name="promo_banner_3" class="form-control bg-dark border-secondary text-white" value="{{ setting('promo_banner_3', '3X Return on all Investment Plans!') }}">
                 </div>
                 <div class="mb-3">
                     <label class="form-label text-muted small">Promo Banner 4 (e.g. WhatsApp CTA)</label>
-                    <input type="text" name="promo_banner_4" class="form-control bg-dark border-secondary text-white" value="{{ $settings['promo_banner_4']->value ?? 'Join our WhatsApp Community!' }}">
+                    <input type="text" name="promo_banner_4" class="form-control bg-dark border-secondary text-white" value="{{ setting('promo_banner_4', 'Join our WhatsApp Community!') }}">
                 </div>
             </div>
         </div>

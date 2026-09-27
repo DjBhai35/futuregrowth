@@ -31,8 +31,12 @@
                         <tr>
                             <td class="fw-bold text-white">#{{ $ticket->id }}</td>
                             <td>
-                                <span class="d-block text-white">{{ $ticket->user->name }}</span>
-                                <small class="text-muted">{{ $ticket->user->email }}</small>
+                                @if($ticket->user)
+                                    <span class="d-block text-white">{{ $ticket->user->name }}</span>
+                                    <small class="text-muted">{{ $ticket->user->email }}</small>
+                                @else
+                                    <span class="text-danger small">Deleted User</span>
+                                @endif
                             </td>
                             <td><span class="text-info">{{ $ticket->subject }}</span></td>
                             <td>

@@ -55,8 +55,8 @@
                 <div class="mb-3">
                     <label class="form-label text-muted text-xs text-uppercase fw-bold">Select Origin Wallet</label>
                     <select name="balance_type" class="form-select" required>
-                        <option value="roi_balance">ROI Wallet (${{ number_format(auth()->user()->wallet->roi_balance, 2) }})</option>
-                        <option value="referral_balance">Referral Wallet (${{ number_format(auth()->user()->wallet->referral_balance, 2) }})</option>
+                        <option value="roi_balance">ROI Wallet (${{ number_format(auth()->user()->wallet ? auth()->user()->wallet->roi_balance : 0, 2) }})</option>
+                        <option value="referral_balance">Referral Wallet (${{ number_format(auth()->user()->wallet ? auth()->user()->wallet->referral_balance : 0, 2) }})</option>
                     </select>
                 </div>
 
