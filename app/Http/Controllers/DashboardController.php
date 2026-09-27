@@ -1,0 +1,519 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\SupportTicket;
+use App\Models\ActivityLog;
+use Carbon\Carbon;
+
+class DashboardController extends Controller
+{
+    public function index()
+    {
+        $user = Auth::user();
+        $this->distributeUserROI($user);
+        $user->refresh();
+        $wallet = $user->wallet;
+        
+        // 1. LIVE USER DASHBOARD CALCULATIONS
+        $totalBalance = $wallet->deposit_balance + $wallet->roi_balance + $wallet->referral_balance + $wallet->bonus_balance;
+        
+        $totalDeposits = \App\Models\Deposit::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->sum('amount');
+            
+        $totalWithdrawals = \App\Models\Withdrawal::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->sum('amount');
+            
+        $activeInvestmentsSum = \App\Models\Investment::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->sum('amount');
+            
+        $completedInvestmentsCount = \App\Models\Investment::where('user_id', $user->id)
+            ->where('status', 'completed')
+            ->count();
+            
+        $completedInvestmentsSum = \App\Models\Investment::where('user_id', $user->id)
+            ->where('status', 'completed')
+            ->sum('amount');
+            
+        $roiEarned = \App\Models\Investment::where('user_id', $user->id)
+            ->sum('total_earned');
+            
+        $referralCommission = \App\Models\Transaction::where('user_id', $user->id)
+            ->where('type', 'commission')
+            ->sum('amount');
+            
+        $totalEarnings = $roiEarned + $referralCommission;
+        
+        $directReferralsCount = \App\Models\User::where('referred_by', $user->id)->count();
+
+        // 10-Level Recursive Team Stats (Eager loaded & Cycle-safe)
+        $teamSize = 0;
+        $teamVolume = 0;
+        $visitedUserIds = [$user->id];
+        $currentLevelReferrals = \App\Models\User::where('referred_by', $user->id)->get();
+        for ($i = 1; $i <= 10; $i++) {
+            if ($currentLevelReferrals->isEmpty()) break;
+            
+            $currentLevelReferrals = $currentLevelReferrals->whereNotIn('id', $visitedUserIds);
+            if ($currentLevelReferrals->isEmpty()) break;
+            
+            $teamSize += $currentLevelReferrals->count();
+            $userIds = $currentLevelReferrals->pluck('id')->toArray();
+            $visitedUserIds = array_merge($visitedUserIds, $userIds);
+            
+            $teamVolume += \App\Models\Investment::whereIn('user_id', $userIds)->where('status', 'active')->sum('amount');
+            $currentLevelReferrals = \App\Models\User::whereIn('referred_by', $userIds)->get();
+        }
+
+        $activeInvestmentsList = \App\Models\Investment::with('plan')
+            ->where('user_id', $user->id)
+            ->whereIn('status', ['active', 'completed'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $transactions = \App\Models\Transaction::where('user_id', $user->id)
+            ->latest()
+            ->take(10)
+            ->get();
+
+        // 2. DAILY ANALYTICS CHARTS (Last 7 Days)
+        $chartLabels = [];
+        $chartInvs = [];
+        $chartDeps = [];
+        $chartWiths = [];
+        $chartRois = [];
+        $chartRefs = [];
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $chartLabels[] = $date->format('M d');
+            $dateString = $date->toDateString();
+
+            $chartInvs[] = \App\Models\Investment::where('user_id', $user->id)
+                ->whereDate('created_at', $dateString)
+                ->sum('amount');
+                
+            $chartDeps[] = \App\Models\Deposit::where('user_id', $user->id)
+                ->where('status', 'approved')
+                ->whereDate('updated_at', $dateString)
+                ->sum('amount');
+                
+            $chartWiths[] = \App\Models\Withdrawal::where('user_id', $user->id)
+                ->where('status', 'approved')
+                ->whereDate('updated_at', $dateString)
+                ->sum('amount');
+                
+            $chartRois[] = \App\Models\Transaction::where('user_id', $user->id)
+                ->where('type', 'roi')
+                ->whereDate('created_at', $dateString)
+                ->sum('amount');
+                
+            $chartRefs[] = \App\Models\Transaction::where('user_id', $user->id)
+                ->where('type', 'commission')
+                ->whereDate('created_at', $dateString)
+                ->sum('amount');
+        }
+
+        $salaryEligibility = (new \App\Services\SalaryService())->calculateEligibility($user);
+
+        return view('dashboard.index', compact(
+            'wallet', 
+            'totalBalance', 
+            'totalDeposits',
+            'totalWithdrawals',
+            'activeInvestmentsSum', 
+            'completedInvestmentsCount',
+            'completedInvestmentsSum',
+            'roiEarned',
+            'referralCommission',
+            'totalEarnings',
+            'activeInvestmentsList',
+            'directReferralsCount', 
+            'teamSize',
+            'teamVolume',
+            'transactions',
+            'chartLabels',
+            'chartInvs',
+            'chartDeps',
+            'chartWiths',
+            'chartRois',
+            'chartRefs',
+            'salaryEligibility'
+        ));
+    }
+
+    public function salary(\App\Services\SalaryService $salaryService)
+    {
+        $user = Auth::user();
+        $currentPeriod = now()->format('Y-m');
+        $eligibility = $salaryService->calculateEligibility($user, $currentPeriod);
+        $claims = \App\Models\SalaryClaim::where('user_id', $user->id)
+            ->latest('claimed_at')
+            ->paginate(15);
+        $levels = $salaryService->getActiveLevels();
+        $directMembers = $salaryService->getDirectMembers($user);
+        $qualifyingDirects = $salaryService->getQualifyingDirectMembers($user);
+
+        return view('dashboard.salary', compact(
+            'user',
+            'eligibility',
+            'claims',
+            'levels',
+            'directMembers',
+            'qualifyingDirects',
+            'currentPeriod'
+        ));
+    }
+
+    public function claimSalary(\App\Services\SalaryService $salaryService)
+    {
+        $user = Auth::user();
+        $currentPeriod = now()->format('Y-m');
+        $result = $salaryService->claimSalary($user, $currentPeriod);
+
+        if (!$result['success']) {
+            return back()->withErrors(['salary_claim' => $result['message']]);
+        }
+
+        return back()->with('success', $result['message']);
+    }
+
+    public function team()
+    {
+        $user = Auth::user();
+        
+        $levelsData = [];
+        $currentLevelUserIds = [$user->id];
+        $visitedUserIds = [$user->id];
+        $allDownlineUserIds = [];
+
+        for ($i = 1; $i <= 10; $i++) {
+            $levelUsers = \App\Models\User::whereIn('referred_by', $currentLevelUserIds)
+                ->whereNotIn('id', $visitedUserIds)
+                ->get();
+            
+            if ($levelUsers->isEmpty()) {
+                $levelsData[$i] = [
+                    'level' => $i,
+                    'percent' => $i === 1 ? setting('direct_reward_percent', 20) : setting('referral_level_' . $i, 1),
+                    'is_direct' => $i === 1,
+                    'total_users' => 0,
+                    'active_users' => 0,
+                    'inactive_users' => 0,
+                    'total_deposits' => 0.00,
+                    'total_investments' => 0.00,
+                    'team_business' => 0.00,
+                    'referral_earnings' => 0.00,
+                ];
+                $currentLevelUserIds = [];
+                continue;
+            }
+
+            $levelUserIds = $levelUsers->pluck('id')->toArray();
+            $visitedUserIds = array_merge($visitedUserIds, $levelUserIds);
+            $allDownlineUserIds = array_merge($allDownlineUserIds, $levelUserIds);
+            
+            $activeUserIds = \App\Models\Investment::whereIn('user_id', $levelUserIds)
+                ->where('status', 'active')
+                ->pluck('user_id')
+                ->unique()
+                ->toArray();
+                
+            $totalUsers = count($levelUserIds);
+            $activeCount = count($activeUserIds);
+            $inactiveCount = $totalUsers - $activeCount;
+            
+            $totalDeposits = \App\Models\Deposit::whereIn('user_id', $levelUserIds)
+                ->where('status', 'approved')
+                ->sum('amount');
+                
+            $totalInvestments = \App\Models\Investment::whereIn('user_id', $levelUserIds)
+                ->sum('amount');
+                
+            $teamBusiness = \App\Models\Investment::whereIn('user_id', $levelUserIds)
+                ->where('status', 'active')
+                ->sum('amount');
+                
+            $referralEarnings = \App\Models\Transaction::where('user_id', $user->id)
+                ->where('type', 'commission')
+                ->whereIn('reference_id', $levelUserIds)
+                ->sum('amount');
+                
+            $levelsData[$i] = [
+                'level' => $i,
+                'percent' => $i === 1 ? setting('direct_reward_percent', 20) : setting('referral_level_' . $i, 1),
+                'is_direct' => $i === 1,
+                'total_users' => $totalUsers,
+                'active_users' => $activeCount,
+                'inactive_users' => $inactiveCount,
+                'total_deposits' => $totalDeposits,
+                'total_investments' => $totalInvestments,
+                'team_business' => $teamBusiness,
+                'referral_earnings' => $referralEarnings,
+            ];
+            
+            $currentLevelUserIds = $levelUserIds;
+        }
+
+        // Summary Stats
+        $teamSize = count($allDownlineUserIds);
+        $directReferralsCount = $levelsData[1]['total_users'];
+        
+        $teamVolume = 0;
+        $todayEarnings = 0;
+        $weeklyEarnings = 0;
+        $monthlyEarnings = 0;
+        $lifetimeEarnings = 0;
+
+        if ($teamSize > 0) {
+            $teamVolume = \App\Models\Investment::whereIn('user_id', $allDownlineUserIds)
+                ->where('status', 'active')
+                ->sum('amount');
+                
+            $lifetimeEarnings = \App\Models\Transaction::where('user_id', $user->id)
+                ->where('type', 'commission')
+                ->sum('amount');
+                
+            $todayEarnings = \App\Models\Transaction::where('user_id', $user->id)
+                ->where('type', 'commission')
+                ->where('created_at', '>=', now()->startOfDay())
+                ->sum('amount');
+                
+            $weeklyEarnings = \App\Models\Transaction::where('user_id', $user->id)
+                ->where('type', 'commission')
+                ->where('created_at', '>=', now()->subDays(7))
+                ->sum('amount');
+                
+            $monthlyEarnings = \App\Models\Transaction::where('user_id', $user->id)
+                ->where('type', 'commission')
+                ->where('created_at', '>=', now()->subDays(30))
+                ->sum('amount');
+        }
+
+        // List direct referrals for detail section
+        $referrals = $user->referrals()->with('wallet')->get();
+
+        return view('dashboard.team', compact(
+            'levelsData',
+            'teamSize',
+            'directReferralsCount',
+            'teamVolume',
+            'todayEarnings',
+            'weeklyEarnings',
+            'monthlyEarnings',
+            'lifetimeEarnings',
+            'referrals'
+        ));
+    }
+
+    public function history(Request $request)
+    {
+        $user = Auth::user();
+        $query = $user->transactions();
+
+        if ($request->filled('type') && $request->type !== 'all') {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->filled('wallet') && $request->wallet !== 'all') {
+            $query->where('wallet_type', $request->wallet);
+        }
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $transactions = $query->latest()->paginate(20)->withQueryString();
+
+        // Financial ledger metrics for user overview
+        $totalDeposited = $user->transactions()->where('type', 'deposit')->whereIn('status', ['approved', 'completed'])->sum('amount');
+        $totalWithdrawn = $user->transactions()->where('type', 'withdrawal')->whereIn('status', ['approved', 'completed'])->sum('amount');
+        $totalRoi = $user->transactions()->where('type', 'roi')->sum('amount');
+        $totalCommissions = $user->transactions()->where('type', 'commission')->sum('amount');
+        $totalSalary = $user->transactions()->where('type', 'salary')->sum('amount');
+
+        return view('dashboard.history', compact(
+            'transactions',
+            'totalDeposited',
+            'totalWithdrawn',
+            'totalRoi',
+            'totalCommissions',
+            'totalSalary'
+        ));
+    }
+
+    public function referralHistory(Request $request)
+    {
+        $user = Auth::user();
+        $query = $user->transactions()->where('type', 'commission');
+
+        if ($request->filled('level') && $request->level !== 'all') {
+            $lvl = $request->level;
+            if ($lvl === 'direct') {
+                $query->where('description', 'like', '%Direct Reward%');
+            } else {
+                $query->where('description', 'like', "%Level {$lvl}%");
+            }
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $commissions = $query->latest()->paginate(20)->withQueryString();
+
+        // Eager load downline users for reference_id to display user names
+        $downlineIds = $commissions->pluck('reference_id')->filter()->unique();
+        $downlineUsers = \App\Models\User::whereIn('id', $downlineIds)->get()->keyBy('id');
+
+        $totalCommissions = $user->transactions()->where('type', 'commission')->sum('amount');
+        $directCommissions = $user->transactions()->where('type', 'commission')->where('description', 'like', '%Direct Reward%')->sum('amount');
+        $matrixCommissions = $totalCommissions - $directCommissions;
+        $totalDirects = \App\Models\User::where('referred_by', $user->id)->count();
+
+        return view('dashboard.referral_history', compact(
+            'commissions',
+            'downlineUsers',
+            'totalCommissions',
+            'directCommissions',
+            'matrixCommissions',
+            'totalDirects'
+        ));
+    }
+
+    public function roiHistory(Request $request)
+    {
+        $user = Auth::user();
+        $query = $user->transactions()->where('type', 'roi');
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $roiTransactions = $query->latest()->paginate(20)->withQueryString();
+
+        // Eager load investment references and plan details
+        $investmentIds = $roiTransactions->pluck('reference_id')->filter()->unique();
+        $investments = \App\Models\Investment::with('plan')->whereIn('id', $investmentIds)->get()->keyBy('id');
+
+        $totalRoiEarned = $user->transactions()->where('type', 'roi')->sum('amount');
+        $activeInvestmentsCount = $user->investments()->where('status', 'active')->count();
+        $totalInvested = $user->investments()->where('status', 'active')->sum('amount');
+
+        return view('dashboard.roi_history', compact(
+            'roiTransactions',
+            'investments',
+            'totalRoiEarned',
+            'activeInvestmentsCount',
+            'totalInvested'
+        ));
+    }
+
+    public function storeTicket(Request $request)
+    {
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string',
+            'screenshot' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+        ]);
+
+        $screenshotPath = null;
+        if ($request->hasFile('screenshot')) {
+            $screenshotPath = $request->file('screenshot')->store('tickets', 'public');
+        }
+
+        SupportTicket::create([
+            'user_id' => Auth::id(),
+            'subject' => $request->subject,
+            'message' => $request->message,
+            'screenshot_path' => $screenshotPath,
+        ]);
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'Opened a support ticket',
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+
+        return back()->with('success', 'Support ticket submitted successfully. We will reply soon.');
+    }
+
+    private function distributeUserROI(\App\Models\User $user)
+    {
+        $investments = \App\Models\Investment::where('user_id', $user->id)
+            ->where('status', 'active')
+            ->where(function ($query) {
+                $query->whereNull('last_roi_at')
+                      ->orWhere('last_roi_at', '<=', now()->subHours(24));
+            })->get();
+
+        if ($investments->isEmpty()) {
+            return;
+        }
+
+        $enableMultiplier = setting('enable_return_multiplier', true);
+        $multiplier = setting('investment_return_multiplier', 3);
+
+        foreach ($investments as $inv) {
+            $roiPercent = (float) setting('daily_roi_percent', $inv->daily_roi_percent ?? 1.0);
+            if ($roiPercent <= 0) {
+                $roiPercent = (float) ($inv->daily_roi_percent ?? 1.0);
+            }
+            $roiAmount = ($inv->amount * $roiPercent) / 100;
+            
+            if ($enableMultiplier) {
+                $maxReturn = $inv->amount * $multiplier;
+                $remainingCapacity = $maxReturn - $inv->total_earned;
+
+                if ($roiAmount >= $remainingCapacity) {
+                    $roiAmount = $remainingCapacity;
+                    $inv->status = 'completed';
+                }
+            }
+            
+            if ($roiAmount > 0) {
+                $wallet = $user->wallet;
+                $wallet->roi_balance += $roiAmount;
+                $wallet->save();
+
+                \App\Models\Transaction::create([
+                    'user_id' => $inv->user_id,
+                    'type' => 'roi',
+                    'amount' => $roiAmount,
+                    'wallet_type' => 'roi_balance',
+                    'status' => 'completed',
+                    'description' => "Daily ROI for Investment #" . $inv->id,
+                    'reference_id' => $inv->id
+                ]);
+
+                $inv->total_earned += $roiAmount;
+            }
+
+            $inv->last_roi_at = now();
+            $inv->save();
+        }
+    }
+}
