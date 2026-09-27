@@ -1505,4 +1505,87 @@ class AdminController extends Controller
 
         return back()->with('success', $result['message']);
     }
+
+    public function transactions(Request $request)
+    {
+        $query = \App\Models\Transaction::with('user');
+
+        if ($request->filled('type') && $request->type !== 'all') {
+            $query->where('type', $request->type);
+        }
+
+        if ($request->filled('wallet') && $request->wallet !== 'all') {
+            $query->where('wallet_type', $request->wallet);
+        }
+
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('description', 'like', "%{$search}%")
+                  ->orWhere('reference_id', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%")
+                        ->orWhere('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $transactions = $query->latest()->paginate(25)->withQueryString();
+
+        $stats = [
+            'total_deposits' => \App\Models\Transaction::where('type', 'deposit')->where('status', 'completed')->sum('amount'),
+            'total_withdrawals' => \App\Models\Transaction::where('type', 'withdrawal')->where('status', 'completed')->sum('amount'),
+            'total_roi' => \App\Models\Transaction::where('type', 'roi')->where('status', 'completed')->sum('amount'),
+            'total_commissions' => \App\Models\Transaction::where('type', 'commission')->where('status', 'completed')->sum('amount'),
+            'total_salaries' => \App\Models\Transaction::where('type', 'salary')->where('status', 'completed')->sum('amount'),
+        ];
+
+        return view('admin.transactions', compact('transactions', 'stats'));
+    }
+
+    public function roiHistory(Request $request)
+    {
+        $query = \App\Models\Transaction::with('user')->where('type', 'roi');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('description', 'like', "%{$search}%")
+                  ->orWhere('reference_id', 'like', "%{$search}%")
+                  ->orWhereHas('user', function ($uq) use ($search) {
+                      $uq->where('name', 'like', "%{$search}%")
+                        ->orWhere('username', 'like', "%{$search}%")
+                        ->orWhere('email', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+
+        $roiTransactions = $query->latest()->paginate(25)->withQueryString();
+        $totalRoiPaid = \App\Models\Transaction::where('type', 'roi')->sum('amount');
+        $todayRoiPaid = \App\Models\Transaction::where('type', 'roi')->whereDate('created_at', today())->sum('amount');
+
+        return view('admin.roi_history', compact('roiTransactions', 'totalRoiPaid', 'todayRoiPaid'));
+    }
 }
+

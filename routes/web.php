@@ -8,13 +8,23 @@ Route::get('/', function () {
     $faqs = \App\Models\Faq::where('is_active', true)->orderBy('sort_order')->get();
     $plans = \App\Models\Plan::where('status', 'active')->orderBy('min_amount')->get();
     $stats = [
-        'users' => max(15, \App\Models\User::count()),
-        'deposits' => max(2500, \App\Models\Deposit::where('status', 'approved')->sum('amount')),
+        'users' => \App\Models\User::count(),
+        'deposits' => (float) \App\Models\Deposit::where('status', 'approved')->sum('amount'),
+        'withdrawals' => (float) \App\Models\Withdrawal::where('status', 'approved')->sum('amount'),
+        'investments' => (float) \App\Models\Investment::sum('amount'),
         'levels' => 10,
         'multiplier' => setting('enable_return_multiplier', 1) ? (setting('investment_return_multiplier', 3) * 100) : 300,
     ];
     $salaryLevels = \App\Models\SalaryLevel::where('is_active', true)->orderBy('level_number', 'asc')->get();
-    return view('welcome', compact('faqs', 'plans', 'stats', 'salaryLevels'));
+
+    // Real platform activities for privacy-safe live activity notifications
+    $recentActivities = \App\Models\Transaction::with('user')
+        ->whereIn('status', ['approved', 'completed'])
+        ->latest()
+        ->take(10)
+        ->get();
+
+    return view('welcome', compact('faqs', 'plans', 'stats', 'salaryLevels', 'recentActivities'));
 })->name('home');
 
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
@@ -51,6 +61,8 @@ Route::middleware(['auth', \App\Http\Middleware\EnsureEmailIsVerified::class])->
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/team', [DashboardController::class, 'team'])->name('dashboard.team');
     Route::get('/dashboard/history', [DashboardController::class, 'history'])->name('dashboard.history');
+    Route::get('/dashboard/history/referrals', [DashboardController::class, 'referralHistory'])->name('dashboard.history.referrals');
+    Route::get('/dashboard/history/roi', [DashboardController::class, 'roiHistory'])->name('dashboard.history.roi');
     Route::get('/dashboard/salary', [DashboardController::class, 'salary'])->name('dashboard.salary');
     Route::post('/dashboard/salary/claim', [DashboardController::class, 'claimSalary'])->name('dashboard.salary.claim');
     
@@ -88,6 +100,8 @@ Route::any('/admin', function () {
 
 Route::middleware(['auth', AdminMiddleware::class])->prefix($adminSecret)->name('admin.')->group(function () {
     Route::get('/', [\App\Http\Controllers\AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/transactions', [\App\Http\Controllers\AdminController::class, 'transactions'])->name('transactions');
+    Route::get('/roi-history', [\App\Http\Controllers\AdminController::class, 'roiHistory'])->name('roi-history');
     Route::get('/settings', [\App\Http\Controllers\AdminController::class, 'settings'])->name('settings');
     Route::post('/settings', [\App\Http\Controllers\AdminController::class, 'updateSettings'])->name('settings.update');
 

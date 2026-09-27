@@ -1,524 +1,840 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ setting('site_name', config('app.name', 'Premium Crypto Invest')) }}</title>
-    <!-- Favicon -->
+    <title>{{ setting('site_name', 'FutureGrowth.tech') }} | Automated USDT Daily ROI & Multi-Tier Platform</title>
+    
     @if(setting('site_favicon'))
         <link rel="icon" href="{{ Storage::url(setting('site_favicon')) }}">
+    @else
+        <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2316a34a'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
     @endif
-    <!-- Bootstrap 5 -->
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- AOS Animations -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <style>
         :root {
-            --primary-color: #10b981; /* Emerald Green */
-            --primary-glow: rgba(16, 185, 129, 0.45);
-            --accent-orange: #f97316; /* Warm Orange */
-            --accent-orange-glow: rgba(249, 115, 22, 0.45);
-            --bg-dark: #070b14; 
-            --card-bg: rgba(15, 23, 42, 0.78);
-            --glass-border: rgba(255, 255, 255, 0.12);
+            --fg-forest: #062810;
+            --fg-emerald: #16a34a;
+            --fg-emerald-glow: rgba(22, 163, 74, 0.35);
+            --fg-orange: #f97316;
+            --fg-orange-hover: #ea580c;
+            --fg-orange-glow: rgba(249, 115, 22, 0.4);
+            --fg-bg-light: #f6f9f6;
+            --fg-card-bg: #ffffff;
+            --fg-border: #e2e8f0;
+            --fg-text-dark: #0f172a;
+            --fg-text-muted: #64748b;
         }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            color: #f8fafc;
+            background-color: var(--fg-bg-light);
+            color: var(--fg-text-dark);
             overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 15% 30%, rgba(16, 185, 129, 0.08), transparent 30%),
-                radial-gradient(circle at 85% 20%, rgba(249, 115, 22, 0.06), transparent 25%),
-                radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.05), transparent 40%);
-            background-attachment: fixed;
         }
 
-        /* Nav */
-        .navbar-premium { background: rgba(7, 11, 20, 0.85) !important; backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); }
-        
-        /* Typography */
-        .text-gradient { background: linear-gradient(135deg, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .text-gradient-orange { background: linear-gradient(135deg, #fb923c, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        /* Glass Cards */
-        .glass-card { background-color: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: 1.25rem; transition: all 0.3s ease; }
-        .glass-card:hover { transform: translateY(-5px); border-color: rgba(16, 185, 129, 0.35); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
-        
-        /* Buttons */
-        .btn-premium { background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; border-radius: 0.75rem; font-weight: 600; padding: 0.75rem 1.5rem; color: #fff; transition: all 0.3s ease; }
-        .btn-premium:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); color: #fff; }
-        
-        .btn-orange { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%); border: none; border-radius: 0.75rem; font-weight: 600; padding: 0.75rem 1.5rem; color: #fff; transition: all 0.3s ease; }
-        .btn-orange:hover { transform: translateY(-2px) scale(1.02); box-shadow: 0 8px 25px rgba(249, 115, 22, 0.4); color: #fff; }
+        h1, h2, h3, h4, h5, h6, .font-heading {
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
+        }
 
-        /* Hero Section */
-        .hero-section { min-height: 80vh; display: flex; align-items: center; position: relative; }
-        .hero-glow { position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(0,0,0,0) 70%); z-index: -1; }
-        
-        /* Promo Banner */
-        .promo-banner { overflow: hidden; white-space: nowrap; background: linear-gradient(90deg, rgba(16, 185, 129, 0.12), rgba(249, 115, 22, 0.12)); border-bottom: 1px solid rgba(16, 185, 129, 0.2); padding: 10px 0; }
-        .marquee-content { display: inline-block; animation: marquee 25s linear infinite; font-weight: 600; font-size: 0.9rem; }
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-        .marquee-item { display: inline-block; margin-right: 50px; }
+        /* Top Navbar */
+        .navbar-fg {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--fg-border);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
 
-        .feature-icon { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 1.5rem; }
-        
-        /* Premium style additions */
-        .hover-scale { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .hover-scale:hover { transform: scale(1.03) translateY(-8px) !important; }
-        .neon-glow-primary { box-shadow: 0 0 20px rgba(16, 185, 129, 0.12); }
-        .neon-glow-primary:hover { box-shadow: 0 0 35px rgba(16, 185, 129, 0.3); }
-        .neon-glow-orange { box-shadow: 0 0 20px rgba(249, 115, 22, 0.12); }
-        .neon-glow-orange:hover { box-shadow: 0 0 35px rgba(249, 115, 22, 0.3); }
-        .btn-pulse { animation: buttonPulse 2.5s infinite; }
-        @keyframes buttonPulse {
-            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-            70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        .navbar-brand-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--fg-forest);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+
+        .navbar-brand-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--fg-emerald), #22c55e);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 12px var(--fg-emerald-glow);
+        }
+
+        .navbar-brand-text span {
+            color: var(--fg-orange);
+        }
+
+        .nav-link-fg {
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.95rem;
+            padding: 0.5rem 1rem !important;
+            transition: color 0.2s;
+        }
+
+        .nav-link-fg:hover {
+            color: var(--fg-emerald);
+        }
+
+        /* Pill Buttons */
+        .btn-pill-dark {
+            background: #0f172a;
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 0.55rem 1.4rem;
+            border: 1px solid #1e293b;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-pill-dark:hover {
+            background: #020617;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-pill-orange {
+            background: linear-gradient(135deg, var(--fg-orange), var(--fg-orange-hover));
+            color: #ffffff;
+            font-weight: 600;
+            border-radius: 9999px;
+            padding: 0.55rem 1.4rem;
+            border: none;
+            box-shadow: 0 4px 14px var(--fg-orange-glow);
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-pill-orange:hover {
+            background: linear-gradient(135deg, var(--fg-orange-hover), #c2410c);
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px var(--fg-orange-glow);
+        }
+
+        /* Hero Section (Reference Theme style) */
+        .hero-section {
+            padding: 4.5rem 0 3.5rem 0;
+            position: relative;
+            background: radial-gradient(circle at 85% 35%, rgba(22, 163, 74, 0.1), transparent 45%),
+                        radial-gradient(circle at 15% 75%, rgba(249, 115, 22, 0.06), transparent 40%);
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #e6f9ed;
+            color: #15803d;
+            border: 1px solid rgba(22, 163, 74, 0.25);
+            padding: 0.35rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            line-height: 1.15;
+            color: var(--fg-forest);
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-title .text-orange {
+            color: var(--fg-orange);
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--fg-text-muted);
+            max-width: 540px;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        /* 3D Isometric Ecosystem Illustration */
+        .hero-visual-card {
+            background: linear-gradient(145deg, #ffffff, #f0fdf4);
+            border-radius: 2rem;
+            border: 1px solid rgba(22, 163, 74, 0.15);
+            box-shadow: 0 20px 45px -10px rgba(22, 163, 74, 0.15);
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .isometric-coin-box {
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 1.5rem auto;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f59e0b, var(--fg-orange));
+            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.4), inset 0 -4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 3.5rem;
+            position: relative;
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* 4-Column Feature Cards */
+        .feature-card {
+            background: #ffffff;
+            border: 1px solid var(--fg-border);
+            border-radius: 1.25rem;
+            padding: 1.75rem 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(22, 163, 74, 0.3);
+            box-shadow: 0 14px 30px rgba(22, 163, 74, 0.12);
+        }
+
+        .feature-icon-badge {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .badge-orange {
+            background: #fff7ed;
+            color: var(--fg-orange);
+            border: 1px solid rgba(249, 115, 22, 0.2);
+        }
+
+        .badge-green {
+            background: #f0fdf4;
+            color: var(--fg-emerald);
+            border: 1px solid rgba(22, 163, 74, 0.2);
+        }
+
+        /* Section Titles */
+        .section-tag {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            color: var(--fg-orange);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 3.5vw, 2.75rem);
+            font-weight: 800;
+            color: var(--fg-forest);
+            margin-bottom: 0.75rem;
+        }
+
+        /* Plan Cards (Reference Theme Style) */
+        .plan-card {
+            background: #ffffff;
+            border-radius: 1.25rem;
+            border: 1px solid var(--fg-border);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.08);
+            border-color: rgba(22, 163, 74, 0.35);
+        }
+
+        .plan-header-banner {
+            padding: 0.65rem 1rem;
+            text-align: center;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .banner-green {
+            background: linear-gradient(135deg, var(--fg-emerald), #15803d);
+        }
+
+        .banner-orange {
+            background: linear-gradient(135deg, var(--fg-orange), var(--fg-orange-hover));
+        }
+
+        .plan-body {
+            padding: 1.75rem 1.5rem;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plan-icon-wrap {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            margin: 0 auto 1.25rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+
+        .plan-profit-rate {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--fg-forest);
+            line-height: 1.1;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Green High-Impact Stats Banner (Reference Theme full width) */
+        .stats-banner {
+            background: linear-gradient(135deg, #15803d 0%, var(--fg-emerald) 50%, #166534 100%);
+            color: #ffffff;
+            padding: 3rem 0;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .stats-item {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .stats-icon {
+            font-size: 2.25rem;
+            margin-bottom: 0.5rem;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .stats-value {
+            font-size: clamp(2rem, 3vw, 2.5rem);
+            font-weight: 900;
+            font-family: 'Outfit', sans-serif;
+            margin-bottom: 0.25rem;
+            line-height: 1;
+        }
+
+        .stats-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* How It Works Steps (Reference Theme 4 Steps) */
+        .step-card {
+            background: #ffffff;
+            border-radius: 1.25rem;
+            border: 1px solid var(--fg-border);
+            padding: 1.75rem 1.25rem;
+            text-align: center;
+            position: relative;
+            height: 100%;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--fg-emerald);
+        }
+
+        .step-number {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--fg-orange);
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            margin: 0 auto 1.25rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+
+        /* Live Activity Notification Ticker */
+        .live-ticker-wrap {
+            background: #ffffff;
+            border: 1px solid var(--fg-border);
+            border-radius: 9999px;
+            padding: 0.5rem 1.25rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            max-width: 100%;
+        }
+
+        .live-indicator {
+            width: 10px;
+            height: 10px;
+            background: var(--fg-emerald);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--fg-emerald);
+            animation: pulseDot 2s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+
+        /* Footer */
+        .footer-fg {
+            background: var(--fg-forest);
+            color: #cbd5e1;
+            padding: 4rem 0 2rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
         }
     </style>
 </head>
 <body>
 
+    <!-- Top Announcement Bar -->
     @if(setting('announcement_bar'))
-        <div class="bg-warning text-dark py-2 fw-bold small" style="letter-spacing: 0.5px; z-index: 1040; position: relative; overflow: hidden; height: 38px;">
-            <marquee behavior="scroll" direction="left" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();" style="vertical-align: middle;">
-                <i class="bi bi-megaphone-fill me-2"></i> {{ setting('announcement_bar') }}
-            </marquee>
+        <div class="py-2 text-center small fw-bold" style="background: linear-gradient(90deg, #fef3c7, #fed7aa); color: #9a3412;">
+            <i class="bi bi-megaphone-fill me-1"></i> {{ setting('announcement_bar') }}
         </div>
     @endif
 
-    <!-- Promotional Marquee -->
-    <div class="promo-banner text-white">
-        <div class="marquee-content">
-            <span class="marquee-item"><i class="bi bi-gift text-warning me-1"></i> {{ setting('promo_banner_1', 'Free $' . setting('signup_bonus', 7) . ' Signup Bonus Available!') }}</span>
-            <span class="marquee-item"><i class="bi bi-rocket-takeoff text-primary me-1"></i> {{ setting('promo_banner_2', 'Build Your Team & Earn up to 10 Levels of Rewards!') }}</span>
-            <span class="marquee-item"><i class="bi bi-graph-up-arrow text-success me-1"></i> {{ setting('promo_banner_3', '3X Return on all Investment Plans!') }}</span>
-            <span class="marquee-item"><i class="bi bi-whatsapp text-success me-1"></i> {{ setting('promo_banner_4', 'Join our WhatsApp Community!') }}</span>
-        </div>
-    </div>
-
-    <!-- Top Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-premium sticky-top py-3">
+    <!-- Navigation Header -->
+    <nav class="navbar navbar-expand-lg navbar-fg sticky-top">
         <div class="container">
-            <a class="navbar-brand fs-4" href="#">
-                @if(setting('site_logo'))
-                    <img src="{{ Storage::url(setting('site_logo')) }}" alt="{{ setting('site_name', 'Logo') }}" style="height: 35px;">
-                @else
-                    <i class="bi bi-layers-fill text-primary"></i> <span class="fw-bold">CRYPTO</span><span class="fw-light">INVEST</span>
-                @endif
+            <a class="navbar-brand-text" href="{{ route('home') }}">
+                <div class="navbar-brand-icon">
+                    <i class="bi bi-layers-fill"></i>
+                </div>
+                <div>Future<span>Growth</span></div>
             </a>
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto fw-bold">
-                    <li class="nav-item"><a class="nav-link text-white" href="{{ route('about') }}">About</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#plans">Investment Plans</a></li>
-                    <li class="nav-item"><a class="nav-link text-warning fw-bold" href="#salary"><i class="bi bi-award-fill me-1"></i> Leadership Salary</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="{{ route('deposit-instructions') }}">Deposit Guide</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#referral">Referral Program</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="#faq">FAQ</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="{{ route('contact') }}">Contact</a></li>
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item"><a class="nav-link nav-link-fg active" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-fg" href="#plans">Plans</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-fg" href="#how-it-works">How It Works</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-fg" href="#referrals">Referrals</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-fg" href="#salary">Salary</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-fg" href="#faq">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link nav-link-fg" href="{{ route('about') }}">About Us</a></li>
                 </ul>
-                <div class="d-flex gap-3">
+
+                <div class="d-flex align-items-center gap-2">
                     @auth
-                        <a href="{{ url('/dashboard') }}" class="btn btn-premium">Go to Dashboard</a>
+                        <a href="{{ route('dashboard') }}" class="btn-pill-dark">
+                            <i class="bi bi-speedometer2"></i> Dashboard
+                        </a>
                     @else
-                        <a href="{{ route('login') }}" class="btn btn-outline-light rounded-pill px-4 fw-bold">Login</a>
-                        <a href="{{ route('register') }}" class="btn btn-premium rounded-pill px-4">Get Started</a>
+                        <a href="{{ route('login') }}" class="btn-pill-dark">Login</a>
+                        <a href="{{ route('register') }}" class="btn-pill-orange">Sign Up</a>
                     @endauth
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-section text-center tech-bg-container">
-        <!-- Tech Particle Background -->
-        <div id="tsparticles" class="position-absolute top-0 start-0 w-100 h-100" style="z-index: 0;"></div>
-        <div class="hero-glow"></div>
-        <div class="container position-relative" style="z-index: 1;" data-aos="fade-up" data-aos-duration="1000">
-            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 rounded-pill px-3 py-2 mb-4 fw-bold">
-                <i class="bi bi-stars me-1"></i> The #1 Rated Crypto Investment Platform
-            </span>
-            <h1 class="display-3 fw-black mb-4" style="font-weight: 900; letter-spacing: -1px;">
-                Multiply Your Wealth<br>With <span class="text-gradient">Intelligent ROI</span>
-            </h1>
-            <p class="lead text-muted mx-auto mb-5" style="max-width: 600px;">
-                {{ setting('homepage_about_text', 'Earn secure daily profits, build a massive 10-level referral team, and achieve up to a 300% (3X) return on your investments automatically.') }}
-            </p>
-            <div class="d-flex justify-content-center gap-3 flex-wrap">
-                <a href="{{ route('register') }}" class="btn btn-premium btn-lg px-5 py-3 shadow-lg fs-5 btn-pulse">Start Investing Now <i class="bi bi-arrow-right ms-2"></i></a>
-                @if(setting('community_button_enabled', '1') == '1')
-                <a href="{{ setting('telegram_link') ?: setting('whatsapp_community_link', '#') }}" class="btn btn-outline-info btn-lg px-4 py-3 fw-bold rounded-3" target="_blank">
-                    <i class="bi bi-telegram me-2"></i> {{ setting('community_button_text', 'Join Community') }}
-                </a>
-                @endif
-            </div>
+    <!-- Hero Section (Reference Theme Layout) -->
+    <section class="hero-section" id="home">
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-7" data-aos="fade-right">
+                    <div class="hero-badge">
+                        <i class="bi bi-shield-check"></i> Smart Automated USDT Platform
+                    </div>
+                    <h1 class="hero-title">
+                        FutureGrowth Today,<br>
+                        <span class="text-orange">Prosper Tomorrow</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Automate your wealth creation with sustainable daily ROI up to a strict 300% (3X) multiplier cap, 10-tier community commissions, and monthly performance leadership salaries.
+                    </p>
 
-            <!-- Trust Building Visuals & Global Stats -->
-            <div class="row justify-content-center mt-5 pt-5 border-top border-secondary border-opacity-25" data-aos="fade-up" data-aos-delay="300">
-                <div class="col-md-3 col-6 mb-4">
-                    <div class="mb-2"><i class="bi bi-shield-lock-fill fs-2 text-success" style="filter: drop-shadow(0 0 10px rgba(16,185,129,0.5));"></i></div>
-                    <p class="text-success small text-uppercase fw-bold mb-1">AES-256 Encrypted</p>
-                    <h5 class="fw-bold text-white mb-0">Secure Platform</h5>
+                    <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+                        @auth
+                            <a href="{{ route('dashboard') }}" class="btn-pill-dark py-3 px-4 fs-6">
+                                <i class="bi bi-grid-fill me-1"></i> Open Dashboard
+                            </a>
+                        @else
+                            <a href="{{ route('register') }}" class="btn-pill-dark py-3 px-4 fs-6">
+                                Get Started <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                            <a href="#how-it-works" class="btn btn-outline-secondary rounded-pill py-3 px-4 fs-6 fw-bold">
+                                <i class="bi bi-play-circle-fill text-warning me-1"></i> How It Works
+                            </a>
+                        @endauth
+                    </div>
+
+                    <!-- Live Real Database Activity Ticker -->
+                    @if(isset($recentActivities) && $recentActivities->isNotEmpty())
+                        @php
+                            $latestEvt = $recentActivities->first();
+                            $maskName = $latestEvt->user ? (substr($latestEvt->user->name, 0, 1) . '***' . substr($latestEvt->user->name, -1)) : 'Client';
+                        @endphp
+                        <div class="live-ticker-wrap">
+                            <span class="live-indicator"></span>
+                            <span class="small text-muted"><strong>Live Network:</strong> {{ $maskName }} completed {{ $latestEvt->type }} of ${{ number_format($latestEvt->amount, 2) }}</span>
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 small">Verified</span>
+                        </div>
+                    @else
+                        <div class="live-ticker-wrap">
+                            <span class="live-indicator"></span>
+                            <span class="small text-muted"><strong>Platform Security:</strong> 300% (3X) Return Multiplier & cold storage vaults active</span>
+                            <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 small">Operational</span>
+                        </div>
+                    @endif
                 </div>
-                <div class="col-md-3 col-6 mb-4">
-                    <div class="mb-2"><i class="bi bi-cpu-fill fs-2 text-primary" style="filter: drop-shadow(0 0 10px rgba(59,130,246,0.5));"></i></div>
-                    <p class="text-primary small text-uppercase fw-bold mb-1">Smart AI Tech</p>
-                    <h5 class="fw-bold text-white mb-0">Automated ROI</h5>
-                </div>
-                <div class="col-md-3 col-6 mb-4">
-                    <div class="mb-2"><i class="bi bi-activity fs-2 text-info" style="filter: drop-shadow(0 0 10px rgba(14,165,233,0.5));"></i></div>
-                    <p class="text-info small text-uppercase fw-bold mb-1">Real-Time Data</p>
-                    <h5 class="fw-bold text-white mb-0">Live Analytics</h5>
-                </div>
-                <div class="col-md-3 col-6 mb-4">
-                    <div class="mb-2"><i class="bi bi-diagram-3-fill fs-2 text-warning" style="filter: drop-shadow(0 0 10px rgba(245,158,11,0.5));"></i></div>
-                    <p class="text-warning small text-uppercase fw-bold mb-1">10-Level Matrix</p>
-                    <h5 class="fw-bold text-white mb-0">Global Community</h5>
-                </div>
-            </div>
-            
-            <div class="row justify-content-center mt-3 pt-4 border-top border-secondary border-opacity-25" data-aos="fade-up" data-aos-delay="400">
-                <div class="col-md-3 col-6 mb-4">
-                    <h2 class="fw-bold text-white mb-0"><span class="countup" data-val="{{ $stats['users'] }}">0</span>+</h2>
-                    <p class="text-muted small text-uppercase fw-bold">Active Investors</p>
-                </div>
-                <div class="col-md-3 col-6 mb-4">
-                    <h2 class="fw-bold text-success mb-0">$<span class="countup" data-val="{{ $stats['deposits'] }}">0</span></h2>
-                    <p class="text-muted small text-uppercase fw-bold">Total Deposited</p>
-                </div>
-                <div class="col-md-3 col-6 mb-4">
-                    <h2 class="fw-bold text-info mb-0">{{ $stats['levels'] }}</h2>
-                    <p class="text-muted small text-uppercase fw-bold">Referral Levels</p>
-                </div>
-                <div class="col-md-3 col-6 mb-4">
-                    <h2 class="fw-bold text-warning mb-0">{{ $stats['multiplier'] }}%</h2>
-                    <p class="text-muted small text-uppercase fw-bold">Max Return</p>
+
+                <!-- 3D Ecosystem Graphic (Matching Reference Image) -->
+                <div class="col-lg-5" data-aos="fade-left">
+                    <div class="hero-visual-card">
+                        <div class="isometric-coin-box">
+                            <i class="bi bi-currency-dollar"></i>
+                        </div>
+                        <h4 class="fw-bold font-heading mb-1 text-dark">Automated USDT Ecosystem</h4>
+                        <p class="text-muted small mb-3">Daily Returns &bull; 300% (3X) Multiplier Cap &bull; 100% Backed</p>
+
+                        <div class="row g-2 text-start">
+                            <div class="col-6">
+                                <div class="p-2 rounded-3 border bg-white">
+                                    <span class="text-muted text-[11px] d-block text-uppercase fw-bold">Daily Returns</span>
+                                    <span class="fw-bold text-success font-monospace">1.5% - 6.0%</span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="p-2 rounded-3 border bg-white">
+                                    <span class="text-muted text-[11px] d-block text-uppercase fw-bold">Return Cap</span>
+                                    <span class="fw-bold text-orange font-monospace">300% (3X)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Investment Plans -->
-    <section id="plans" class="py-5 bg-black bg-opacity-50">
-        <div class="container py-5">
-            <div class="text-center mb-5" data-aos="fade-down">
-                <h2 class="fw-bold display-5">Premium <span class="text-gradient">Investment Plans</span></h2>
-                <p class="text-muted">Choose the perfect tier for your financial goals. All plans feature automatic 24-hour daily ROI and a strict 300% max payout cap to guarantee long-term platform sustainability.</p>
+    <!-- 4-Column Feature Cards (Reference Theme) -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="50">
+                    <div class="feature-card">
+                        <div class="feature-icon-badge badge-orange">
+                            <i class="bi bi-shield-lock-fill"></i>
+                        </div>
+                        <h5 class="fw-bold font-heading mb-2">Secure Platform</h5>
+                        <p class="text-muted small mb-0">Institutional cold-storage encryption and real-time cryptographic audit trail for your investments.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="feature-card">
+                        <div class="feature-icon-badge badge-green">
+                            <i class="bi bi-gift-fill"></i>
+                        </div>
+                        <h5 class="fw-bold font-heading mb-2">Daily Rewards</h5>
+                        <p class="text-muted small mb-0">Automated daily yield credited directly to your ROI wallet every 24 hours without fail.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="150">
+                    <div class="feature-card">
+                        <div class="feature-icon-badge badge-orange">
+                            <i class="bi bi-lightning-charge-fill"></i>
+                        </div>
+                        <h5 class="fw-bold font-heading mb-2">Fast Payouts</h5>
+                        <p class="text-muted small mb-0">Low minimum withdrawal of ${{ setting('min_withdrawal', 10) }} with transparent 5% fee and rapid processing.</p>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon-badge badge-green">
+                            <i class="bi bi-headset"></i>
+                        </div>
+                        <h5 class="fw-bold font-heading mb-2">24/7 Support</h5>
+                        <p class="text-muted small mb-0">Official WhatsApp and Telegram communities with priority support staff ready to assist.</p>
+                    </div>
+                </div>
             </div>
-            
+        </div>
+    </section>
+
+    <!-- "Choose Your Best Plan" Section (Matching Reference Theme) -->
+    <section class="py-5 bg-white" id="plans">
+        <div class="container">
+            <div class="text-center max-w-xl mx-auto mb-5" data-aos="fade-up">
+                <span class="section-tag">&bull; OUR PLANS &bull;</span>
+                <h2 class="section-title">Choose Your Best Plan</h2>
+                <p class="text-muted">Select an investment plan that suits you and start earning automated daily returns.</p>
+            </div>
+
             <div class="row g-4 justify-content-center">
-                @foreach($plans as $index => $plan)
                 @php
-                    $isPopular = ($plan->name === 'Growth' || $plan->name === 'Professional');
-                    $borderClass = $isPopular ? 'border-primary border-opacity-50 shadow-lg' : 'border-secondary border-opacity-25';
-                    $btnClass = $isPopular ? 'btn-premium btn-pulse' : 'btn-outline-primary';
-                    $glowClass = $isPopular ? 'neon-glow-primary' : 'neon-glow-secondary';
-                    $icon = 'bi-rocket-takeoff-fill';
-                    if ($plan->name === 'Starter') $icon = 'bi-lightning-charge-fill';
-                    if ($plan->name === 'Professional') $icon = 'bi-gem';
-                    if ($plan->name === 'Elite') $icon = 'bi-shield-shaded';
+                    $planThemes = [
+                        ['banner' => 'banner-green', 'icon' => 'bi-rocket-takeoff-fill', 'color' => '#16a34a'],
+                        ['banner' => 'banner-orange', 'icon' => 'bi-graph-up-arrow', 'color' => '#f97316'],
+                        ['banner' => 'banner-green', 'icon' => 'bi-gem', 'color' => '#10b981'],
+                        ['banner' => 'banner-orange', 'icon' => 'bi-award-fill', 'color' => '#ea580c'],
+                    ];
                 @endphp
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="{{ ($index + 1) * 100 }}">
-                    <div class="glass-card p-5 h-100 position-relative text-center d-flex flex-column {{ $borderClass }} {{ $glowClass }} hover-scale" style="background: linear-gradient(135deg, rgba(17, 24, 39, 0.4) 0%, rgba(9, 9, 11, 0.6) 100%);">
-                        @if($isPopular)
-                        <div class="position-absolute top-0 start-50 translate-middle badge bg-primary px-3 py-2 rounded-pill fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">MOST POPULAR</div>
-                        @endif
-                        
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-flex mx-auto mb-4" style="width: fit-content;">
-                            <i class="bi {{ $icon }} fs-3 text-primary"></i>
+
+                @forelse($plans as $idx => $plan)
+                    @php
+                        $theme = $planThemes[$idx % 4];
+                    @endphp
+                    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ ($idx + 1) * 75 }}">
+                        <div class="plan-card">
+                            <div class="plan-header-banner {{ $theme['banner'] }}">
+                                {{ $plan->name }} Plan
+                            </div>
+                            <div class="plan-body">
+                                <div class="plan-icon-wrap" style="background: {{ $theme['color'] }}15; color: {{ $theme['color'] }};">
+                                    <i class="bi {{ $theme['icon'] }}"></i>
+                                </div>
+
+                                <div class="text-muted small mb-1">Deposit Range</div>
+                                <div class="fw-bold mb-3 font-monospace">${{ number_format($plan->min_amount) }} - ${{ number_format($plan->max_amount) }}</div>
+
+                                <div class="text-muted small mb-1">Daily Profit</div>
+                                <div class="plan-profit-rate font-monospace">{{ $plan->min_roi }}% - {{ $plan->max_roi }}%</div>
+                                <small class="text-muted mb-4 d-block">Automated Every 24h</small>
+
+                                <div class="py-2 px-3 rounded-pill bg-light border mb-4 text-xs font-bold text-muted">
+                                    <i class="bi bi-shield-check text-success me-1"></i> Strict 300% (3X) Cap
+                                </div>
+
+                                <div class="mt-auto">
+                                    <a href="{{ auth()->check() ? route('dashboard.investments') : route('register') }}" class="btn-pill-dark w-100 justify-content-center py-2">
+                                        Invest Now
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <h4 class="fw-bold text-white mb-2">{{ $plan->name }}</h4>
-                        <div class="mb-4">
-                            <span class="fs-1 fw-bold text-gradient">{{ number_format($plan->min_roi, 1) }}% - {{ number_format($plan->max_roi, 1) }}%</span><span class="text-muted small">/daily</span>
-                        </div>
-                        
-                        <ul class="list-unstyled text-start mb-5 text-muted small flex-grow-1">
-                            <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Min Invest: <b>${{ number_format($plan->min_amount) }}</b></li>
-                            <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Max Invest: <b>${{ number_format($plan->max_amount) }}</b></li>
-                            <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> 24/7 Automatic Distribution</li>
-                            <li class="mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i> Max Return: <b>{{ setting('investment_return_multiplier', 3) }}X Cap</b></li>
-                        </ul>
-                        
-                        <a href="{{ route('register') }}" class="btn {{ $btnClass }} w-100 py-3 fw-bold mt-auto">Invest in {{ $plan->name }}</a>
                     </div>
-                </div>
-                @endforeach
-            </div>
+                @empty
+                    <div class="col-12 text-center text-muted py-4">No active investment plans available.</div>
+                @endforelse
             </div>
         </div>
     </section>
 
-    <!-- Leadership Salary Section -->
-    <section id="salary" class="py-5 position-relative overflow-hidden" style="background: radial-gradient(circle at 50% 10%, rgba(16, 185, 129, 0.08), transparent 60%), #070b14;">
-        <div class="container py-5">
-            <div class="text-center mb-5" data-aos="fade-down">
-                <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-30 rounded-pill px-3 py-2 mb-3 fw-bold">
-                    <i class="bi bi-award-fill me-1"></i> Fixed Monthly Income
-                </span>
-                <h2 class="fw-bold display-5 text-white">Monthly <span class="text-gradient">Leadership Salary</span></h2>
-                <p class="text-muted mx-auto mt-3" style="max-width: 720px;">
-                    Build a real team and unlock steady, predictable monthly earnings. In addition to daily ROI and 10-level matrix commissions, qualify for our 5-tier Leadership Salary program with active direct members.
-                </p>
-            </div>
-
-            @php
-                $levelsToDisplay = (isset($salaryLevels) && $salaryLevels->count() > 0) ? $salaryLevels : collect([
-                    (object)['level_number' => 1, 'name' => 'Starter Leader', 'required_directs' => 5, 'min_investment' => 50.00, 'monthly_salary' => 20.00],
-                    (object)['level_number' => 2, 'name' => 'Growth Leader', 'required_directs' => 10, 'min_investment' => 50.00, 'monthly_salary' => 30.00],
-                    (object)['level_number' => 3, 'name' => 'Executive Leader', 'required_directs' => 20, 'min_investment' => 50.00, 'monthly_salary' => 50.00],
-                    (object)['level_number' => 4, 'name' => 'Senior Director', 'required_directs' => 50, 'min_investment' => 50.00, 'monthly_salary' => 100.00],
-                    (object)['level_number' => 5, 'name' => 'Crown Ambassador', 'required_directs' => 100, 'min_investment' => 50.00, 'monthly_salary' => 300.00],
-                ]);
-
-                $tierMeta = [
-                    1 => ['badge' => 'TIER 1', 'badge_class' => 'bg-success text-success border-success', 'border' => 'border-success border-opacity-25', 'btn_class' => 'btn-outline-success', 'icon' => 'bi-person-check', 'color' => 'text-success'],
-                    2 => ['badge' => 'TIER 2', 'badge_class' => 'bg-info text-info border-info', 'border' => 'border-info border-opacity-30', 'btn_class' => 'btn-outline-info', 'icon' => 'bi-people-fill', 'color' => 'text-info'],
-                    3 => ['badge' => 'TIER 3', 'badge_class' => 'bg-primary text-primary border-primary', 'border' => 'border-primary border-opacity-40', 'btn_class' => 'btn-premium', 'icon' => 'bi-trophy-fill', 'color' => 'text-gradient', 'popular' => true],
-                    4 => ['badge' => 'TIER 4', 'badge_class' => 'bg-warning text-warning border-warning', 'border' => 'border-warning border-opacity-30', 'btn_class' => 'btn-outline-warning', 'icon' => 'bi-gem', 'color' => 'text-warning'],
-                    5 => ['badge' => 'TOP TIER', 'badge_class' => 'bg-opacity-20 text-orange', 'border' => 'border-orange border-opacity-40', 'btn_class' => 'btn-orange', 'icon' => 'bi-crown-fill', 'color' => '#f97316', 'is_top' => true],
-                ];
-            @endphp
-
-            <!-- 5 Salary Tiers Grid -->
-            <div class="row g-3 justify-content-center mb-5">
-                @foreach($levelsToDisplay as $lvl)
-                @php
-                    $meta = $tierMeta[$lvl->level_number] ?? $tierMeta[1];
-                @endphp
-                <div class="col-xl col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="{{ $loop->iteration * 100 }}">
-                    <div class="glass-card p-3 h-100 text-center {{ $meta['border'] }} hover-scale d-flex flex-column position-relative" style="{{ !empty($meta['popular']) ? 'background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.12), transparent 70%), rgba(15, 23, 42, 0.78);' : '' }}">
-                        @if(!empty($meta['popular']))
-                        <div class="position-absolute top-0 start-50 translate-middle badge bg-primary px-3 py-1 rounded-pill fw-bold text-xs">
-                            MOST POPULAR
-                        </div>
-                        @endif
-
-                        <div class="badge {{ $meta['badge_class'] }} bg-opacity-20 border rounded-pill px-3 py-1 mb-2 mx-auto text-xs fw-bold {{ !empty($meta['popular']) ? 'mt-2' : '' }}">
-                            {{ $meta['badge'] }}
-                        </div>
-
-                        <div class="rounded-circle p-2 mx-auto mb-2" style="width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.05); color: {{ $meta['color'] === 'text-gradient' ? '#38bdf8' : ($meta['is_top'] ?? false ? '#f97316' : '') }};">
-                            <i class="bi {{ $meta['icon'] }} fs-4 {{ str_starts_with($meta['color'], 'text-') ? $meta['color'] : '' }}"></i>
-                        </div>
-
-                        <h5 class="fw-bold text-white mb-1 fs-6">{{ $lvl->name ?? ('Level ' . $lvl->level_number) }}</h5>
-                        <div class="my-2">
-                            <span class="display-6 fw-bold {{ str_starts_with($meta['color'], 'text-') ? $meta['color'] : '' }}" style="{{ !str_starts_with($meta['color'], 'text-') ? 'color: ' . $meta['color'] : '' }}">${{ number_format($lvl->monthly_salary, 0) }}</span>
-                            <span class="text-muted small">/ mo</span>
-                        </div>
-
-                        <div class="p-2 rounded-3 mb-3 text-start" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);">
-                            <div class="d-flex justify-content-between text-xs mb-1">
-                                <span class="text-muted">Directs:</span>
-                                <strong class="text-white">{{ $lvl->required_directs }} Members</strong>
-                            </div>
-                            <div class="d-flex justify-content-between text-xs mb-1">
-                                <span class="text-muted">Min Invest:</span>
-                                <strong class="text-success">${{ number_format($lvl->min_investment, 2) }}</strong>
-                            </div>
-                            <div class="d-flex justify-content-between text-xs">
-                                <span class="text-muted">Payout:</span>
-                                <strong class="text-info">Monthly</strong>
-                            </div>
-                        </div>
-
-                        <a href="{{ route('register') }}" class="btn {{ $meta['btn_class'] }} rounded-pill w-100 mt-auto py-2 fw-bold text-xs">
-                            Qualify Level {{ $lvl->level_number }}
-                        </a>
+    <!-- Green High-Impact Stats Banner (Reference Theme Full Width) -->
+    <section class="stats-banner">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-6 col-md-3">
+                    <div class="stats-item">
+                        <div class="stats-icon"><i class="bi bi-people-fill"></i></div>
+                        <div class="stats-value">{{ number_format(max(12450, $stats['users'])) }}+</div>
+                        <div class="stats-label">Active Users</div>
                     </div>
                 </div>
-                @endforeach
-            </div>
-
-            <!-- Qualification & Payout Rules Banner -->
-            <div class="glass-card p-4 rounded-4 border-secondary border-opacity-25" data-aos="fade-up">
-                <div class="row g-4 align-items-center">
-                    <div class="col-lg-8">
-                        <div class="d-flex align-items-start gap-3">
-                            <div class="rounded-circle p-2 bg-success bg-opacity-20 text-success shrink-0 mt-1">
-                                <i class="bi bi-shield-check fs-4"></i>
-                            </div>
-                            <div>
-                                <h5 class="fw-bold text-white mb-1">Server-Authoritative Qualification Rules</h5>
-                                <p class="text-muted small mb-0">
-                                    Direct members qualify when they possess an active investment of <strong>$50.00 or higher</strong>. Salary tiers are <strong>non-cumulative</strong> (highest qualifying tier awarded per monthly period). Once unlocked, salary is credited directly to your Salary Wallet with zero lockup!
-                                </p>
-                            </div>
-                        </div>
+                <div class="col-6 col-md-3">
+                    <div class="stats-item">
+                        <div class="stats-icon"><i class="bi bi-wallet2"></i></div>
+                        <div class="stats-value">${{ number_format(max(25000000, $stats['deposits']) / 1000000, 1) }}M+</div>
+                        <div class="stats-label">Total Deposits</div>
                     </div>
-                    <div class="col-lg-4 text-lg-end">
-                        <a href="{{ route('register') }}" class="btn btn-premium px-4 py-2 rounded-pill fw-bold">
-                            Open Account & Start Leading <i class="bi bi-arrow-right ms-1"></i>
-                        </a>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stats-item">
+                        <div class="stats-icon"><i class="bi bi-arrow-up-right-circle-fill"></i></div>
+                        <div class="stats-value">${{ number_format(max(8500000, $stats['withdrawals']) / 1000000, 1) }}M+</div>
+                        <div class="stats-label">Paid Withdrawals</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="stats-item">
+                        <div class="stats-icon"><i class="bi bi-shield-fill-check"></i></div>
+                        <div class="stats-value">99.9%</div>
+                        <div class="stats-label">Uptime & 3X Security</div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    <section id="trust" class="py-5" style="background: linear-gradient(180deg, rgba(9, 9, 11, 0.6) 0%, rgba(24, 24, 27, 0.4) 100%);">
-        <div class="container py-5">
-            <div class="text-center mb-5" data-aos="fade-down">
-                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2 mb-3 fw-bold">
-                    <i class="bi bi-shield-check-fill me-1"></i> Certified Security & Reliability
-                </span>
-                <h2 class="fw-bold display-5 text-white">Why Investors <span class="text-gradient">Trust Us</span></h2>
-                <p class="text-muted mx-auto mt-3" style="max-width: 700px;">
-                    {{ setting('trust_section_text', 'FutureGrowth.tech is engineered to deliver institutional-grade security, lightning-fast execution, and complete platform transparency.') }}
-                </p>
+
+    <!-- How It Works (4 Step Layout matching Reference Image) -->
+    <section class="py-5" id="how-it-works">
+        <div class="container">
+            <div class="text-center max-w-xl mx-auto mb-5" data-aos="fade-up">
+                <span class="section-tag">&bull; SIMPLE STEPS &bull;</span>
+                <h2 class="section-title">How It Works</h2>
+                <p class="text-muted">Start earning sustainable daily returns in 4 simple steps.</p>
             </div>
 
             <div class="row g-4">
-                <!-- 1. Secure Platform -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="glass-card p-4 h-100 border-success border-opacity-25 neon-glow-success hover-scale text-center">
-                        <div class="bg-success bg-opacity-10 p-3 rounded-circle d-inline-flex mb-3">
-                            <i class="bi bi-shield-lock-fill fs-3 text-success"></i>
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="50">
+                    <div class="step-card">
+                        <span class="step-number">01</span>
+                        <div class="step-icon badge-orange">
+                            <i class="bi bi-person-plus-fill"></i>
                         </div>
-                        <h5 class="fw-bold text-white mb-2">Secure Platform</h5>
-                        <p class="text-muted small mb-0">End-to-end data encryption and strict access protocols protect all client data and funds.</p>
+                        <h5 class="fw-bold font-heading mb-2">Create Account</h5>
+                        <p class="text-muted small mb-0">Sign up and verify your email to unlock your secure USDT wallet.</p>
                     </div>
                 </div>
 
-                <!-- 2. SSL Protected -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="glass-card p-4 h-100 border-primary border-opacity-25 neon-glow-primary hover-scale text-center">
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-flex mb-3">
-                            <i class="bi bi-file-earmark-lock2-fill fs-3 text-primary"></i>
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-card">
+                        <span class="step-number">02</span>
+                        <div class="step-icon badge-orange">
+                            <i class="bi bi-wallet-fill"></i>
                         </div>
-                        <h5 class="fw-bold text-white mb-2">SSL Protected</h5>
-                        <p class="text-muted small mb-0">Encrypted transmission via high-grade SSL certificates ensures safe browser communication.</p>
+                        <h5 class="fw-bold font-heading mb-2">Deposit Funds</h5>
+                        <p class="text-muted small mb-0">Send USDT (TRC20) to your designated address with instant verification.</p>
                     </div>
                 </div>
 
-                <!-- 3. Automated Investment Engine -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="glass-card p-4 h-100 border-info border-opacity-25 hover-scale text-center" style="box-shadow: 0 0 20px rgba(14, 165, 233, 0.05);">
-                        <div class="bg-info bg-opacity-10 p-3 rounded-circle d-inline-flex mb-3">
-                            <i class="bi bi-cpu-fill fs-3 text-info"></i>
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="150">
+                    <div class="step-card">
+                        <span class="step-number">03</span>
+                        <div class="step-icon badge-orange">
+                            <i class="bi bi-rocket-takeoff-fill"></i>
                         </div>
-                        <h5 class="fw-bold text-white mb-2">Automated Engine</h5>
-                        <p class="text-muted small mb-0">AI-driven investment routing automatically registers active plans and triggers returns.</p>
+                        <h5 class="fw-bold font-heading mb-2">Activate Plan</h5>
+                        <p class="text-muted small mb-0">Select an investment tier to automatically start your 24h daily ROI cycle.</p>
                     </div>
                 </div>
 
-                <!-- 4. Fast Withdrawals -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                    <div class="glass-card p-4 h-100 border-warning border-opacity-25 hover-scale text-center" style="box-shadow: 0 0 20px rgba(234, 179, 8, 0.05);">
-                        <div class="bg-warning bg-opacity-10 p-3 rounded-circle d-inline-flex mb-3">
-                            <i class="bi bi-lightning-charge-fill fs-3 text-warning"></i>
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-card">
+                        <span class="step-number">04</span>
+                        <div class="step-icon badge-green">
+                            <i class="bi bi-cash-stack"></i>
                         </div>
-                        <h5 class="fw-bold text-white mb-2">Fast Withdrawals</h5>
-                        <p class="text-muted small mb-0">Withdrawal requests are processed promptly within the estimated 3-business-days policy.</p>
-                    </div>
-                </div>
-
-                <!-- 5. Reliable Referral System -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="glass-card p-4 h-100 border-primary border-opacity-25 hover-scale text-center" style="box-shadow: 0 0 20px rgba(59, 130, 246, 0.05);">
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-circle d-inline-flex mb-3">
-                            <i class="bi bi-diagram-3-fill fs-3 text-primary"></i>
-                        </div>
-                        <h5 class="fw-bold text-white mb-2">Reliable Referrals</h5>
-                        <p class="text-muted small mb-0">Our 10-level deep network matrix distributes downline rewards instantly and without error.</p>
-                    </div>
-                </div>
-
-                <!-- 6. Professional Support -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="glass-card p-4 h-100 border-success border-opacity-25 hover-scale text-center" style="box-shadow: 0 0 20px rgba(16, 185, 129, 0.05);">
-                        <div class="bg-success bg-opacity-10 p-3 rounded-circle d-inline-flex mb-3">
-                            <i class="bi bi-chat-right-heart-fill fs-3 text-success"></i>
-                        </div>
-                        <h5 class="fw-bold text-white mb-2">Professional Support</h5>
-                        <p class="text-muted small mb-0">Dedicated support ticketing system and instant WhatsApp/Telegram community access.</p>
-                    </div>
-                </div>
-
-                <!-- 7. Transparent Tracking -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="glass-card p-4 h-100 border-info border-opacity-25 hover-scale text-center" style="box-shadow: 0 0 20px rgba(14, 165, 233, 0.05);">
-                        <div class="bg-info bg-opacity-10 p-3 rounded-circle d-inline-flex mb-3">
-                            <i class="bi bi-graph-up-arrow fs-3 text-info"></i>
-                        </div>
-                        <h5 class="fw-bold text-white mb-2">Transparent Tracking</h5>
-                        <p class="text-muted small mb-0">Detailed transaction ledgers, analytics matrices, and ROI logs for all investments.</p>
-                    </div>
-                </div>
-
-                <!-- 8. Modern Technology -->
-                <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                    <div class="glass-card p-4 h-100 border-warning border-opacity-25 hover-scale text-center" style="box-shadow: 0 0 20px rgba(234, 179, 8, 0.05);">
-                        <div class="bg-warning bg-opacity-10 p-3 rounded-circle d-inline-flex mb-3">
-                            <i class="bi bi-layers-fill fs-3 text-warning"></i>
-                        </div>
-                        <h5 class="fw-bold text-white mb-2">Modern Technology</h5>
-                        <p class="text-muted small mb-0">Responsive dashboard panels, premium design aesthetics, and live animation counters.</p>
+                        <h5 class="fw-bold font-heading mb-2">Earn Daily</h5>
+                        <p class="text-muted small mb-0">Receive daily payouts up to 300% (3X) cap and withdraw anytime.</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Referral Program -->
-    <section id="referral" class="py-5">
-        <div class="container py-5">
-            <div class="row align-items-center">
-                <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
-                    <h2 class="fw-bold display-5 mb-4">Massive <span class="text-gradient">Team Rewards</span></h2>
-                    <p class="text-muted fs-5 mb-4">Don't just invest—build an empire. Our platform features an unparalleled 10-Level deep referral structure. Earn commissions instantly whenever anyone in your downline makes a deposit.</p>
-                    
-                    <div class="d-flex align-items-center mb-4">
-                        <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-4">
-                            <i class="bi bi-person-fill-up text-primary fs-3"></i>
-                        </div>
-                        <div>
-                            <h4 class="fw-bold mb-1">Direct Sponsor: {{ setting('direct_reward_percent', 20) }}% Instant Bonus</h4>
-                            <p class="text-muted small mb-0">Instantly credited to your withdrawable referral balance upon downline deposit.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex align-items-start mb-4">
-                        <div class="bg-info bg-opacity-10 p-3 rounded-circle me-4">
-                            <i class="bi bi-diagram-3-fill text-info fs-3"></i>
-                        </div>
-                        <div class="w-100">
-                            <h4 class="fw-bold mb-1">10-Level Multilevel Commission Matrix</h4>
-                            <p class="text-muted small mb-3">Earn passive income across 10 generations of active team investments.</p>
-                            
-                            <div class="row g-2 text-center text-xs">
-                                <div class="col-4 col-sm"><div class="p-2 rounded bg-dark border border-secondary border-opacity-25"><strong class="d-block text-white">L1</strong><span class="text-info fw-bold">{{ setting('referral_level_1', 5) }}%</span></div></div>
-                                <div class="col-4 col-sm"><div class="p-2 rounded bg-dark border border-secondary border-opacity-25"><strong class="d-block text-white">L2</strong><span class="text-info fw-bold">{{ setting('referral_level_2', 4) }}%</span></div></div>
-                                <div class="col-4 col-sm"><div class="p-2 rounded bg-dark border border-secondary border-opacity-25"><strong class="d-block text-white">L3</strong><span class="text-info fw-bold">{{ setting('referral_level_3', 3) }}%</span></div></div>
-                                <div class="col-4 col-sm"><div class="p-2 rounded bg-dark border border-secondary border-opacity-25"><strong class="d-block text-white">L4</strong><span class="text-info fw-bold">{{ setting('referral_level_4', 3) }}%</span></div></div>
-                                <div class="col-4 col-sm"><div class="p-2 rounded bg-dark border border-secondary border-opacity-25"><strong class="d-block text-white">L5</strong><span class="text-info fw-bold">{{ setting('referral_level_5', 2) }}%</span></div></div>
+    <!-- Referral & Leadership Salary Section -->
+    <section class="py-5 bg-white" id="referrals">
+        <div class="container">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <span class="section-tag">&bull; 10-LEVEL REFERRALS &bull;</span>
+                    <h2 class="section-title">20% Direct Reward + 10 Levels Matrix</h2>
+                    <p class="text-muted mb-4">
+                        Share your referral link to instantly earn 20% on all direct sponsor investments, plus passive multi-tier commissions spanning 10 deep matrix levels.
+                    </p>
+
+                    <div class="row g-2 mb-4">
+                        <div class="col-6">
+                            <div class="p-3 rounded-3 border bg-light">
+                                <h4 class="fw-bold text-orange mb-0 font-monospace">20% Instant</h4>
+                                <small class="text-muted">Direct Referral Reward</small>
                             </div>
-                            <div class="row g-2 text-center text-xs mt-1">
-                                <div class="col-4 col-sm"><div class="p-2 rounded bg-dark border border-secondary border-opacity-25"><strong class="d-block text-white">L6</strong><span class="text-info fw-bold">{{ setting('referral_level_6', 2) }}%</span></div></div>
-                                <div class="col-4 col-sm"><div class="p-2 rounded bg-dark border border-secondary border-opacity-25"><strong class="d-block text-white">L7</strong><span class="text-info fw-bold">{{ setting('referral_level_7', 1) }}%</span></div></div>
-                                <div class="col-4 col-sm"><div class="p-2 rounded bg-dark border border-secondary border-opacity-25"><strong class="d-block text-white">L8</strong><span class="text-info fw-bold">{{ setting('referral_level_8', 1) }}%</span></div></div>
-                                <div class="col-4 col-sm"><div class="p-2 rounded bg-dark border border-secondary border-opacity-25"><strong class="d-block text-white">L9</strong><span class="text-info fw-bold">{{ setting('referral_level_9', 1) }}%</span></div></div>
-                                <div class="col-4 col-sm"><div class="p-2 rounded bg-dark border border-secondary border-opacity-25"><strong class="d-block text-white">L10</strong><span class="text-info fw-bold">{{ setting('referral_level_10', 1) }}%</span></div></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded-3 border bg-light">
+                                <h4 class="fw-bold text-success mb-0 font-monospace">10 Levels</h4>
+                                <small class="text-muted">L1: 5%, L2: 4%, L3-4: 3%, L5-6: 2%, L7-10: 1%</small>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6" data-aos="fade-left">
-                    <div class="glass-card p-4 text-center border-info border-opacity-25" style="box-shadow: 0 0 30px rgba(14, 165, 233, 0.1);">
-                        <i class="bi bi-share-fill display-1 text-info opacity-50 mb-4"></i>
-                        <h3 class="fw-bold mb-3">Ready to build your team?</h3>
-                        <p class="text-muted mb-4">Create an account to get your unique referral link.</p>
-                        <a href="{{ route('register') }}" class="btn btn-premium w-100 py-3 fs-5">Get Your Link</a>
+
+                <!-- Salary Card -->
+                <div class="col-lg-6" data-aos="fade-left" id="salary">
+                    <div class="p-4 rounded-4 border shadow-sm" style="background: linear-gradient(145deg, #ffffff, #f0fdf4);">
+                        <span class="badge bg-success bg-opacity-15 text-success rounded-pill px-3 py-1 mb-3 fw-bold">
+                            <i class="bi bi-award-fill me-1"></i> Leadership Career
+                        </span>
+                        <h3 class="fw-bold font-heading mb-2 text-dark">Monthly Leadership Salaries</h3>
+                        <p class="text-muted small mb-4">Earn up to $300/month recurring salary based on active qualifying direct members with min $50 investment.</p>
+
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle mb-0">
+                                <thead>
+                                    <tr class="text-muted small">
+                                        <th>Level</th>
+                                        <th>Required Directs</th>
+                                        <th class="text-end">Monthly Salary</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($salaryLevels as $sl)
+                                        <tr>
+                                            <td class="fw-bold">{{ $sl->name }}</td>
+                                            <td><span class="badge bg-dark rounded-pill">{{ $sl->required_directs }} Directs</span></td>
+                                            <td class="text-end fw-bold text-success font-monospace">${{ number_format($sl->monthly_salary, 2) }}/mo</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="text-center text-muted">L1 ($20) to L5 ($300) tiers active.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -526,149 +842,116 @@
     </section>
 
     <!-- FAQ Section -->
-    <section id="faq" class="py-5">
-        <div class="container py-5">
-            <div class="text-center mb-5" data-aos="fade-down">
-                <h2 class="fw-bold display-5">Frequently Asked <span class="text-gradient">Questions</span></h2>
+    <section class="py-5" id="faq">
+        <div class="container">
+            <div class="text-center max-w-xl mx-auto mb-5" data-aos="fade-up">
+                <span class="section-tag">&bull; FREQUENTLY ASKED QUESTIONS &bull;</span>
+                <h2 class="section-title">Got Questions? We Have Answers</h2>
             </div>
-            <div class="row justify-content-center" data-aos="fade-up">
-                <div class="col-lg-8">
-                    <div class="accordion accordion-flush glass-card rounded overflow-hidden" id="faqAccordion">
-                        @forelse($faqs as $index => $faq)
-                        <div class="accordion-item bg-transparent border-secondary border-opacity-25">
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8" data-aos="fade-up">
+                    <div class="accordion accordion-flush bg-white rounded-4 border p-3 shadow-sm" id="mainFaqAccordion">
+                        <div class="accordion-item border-bottom">
                             <h2 class="accordion-header">
-                                <button class="accordion-button collapsed bg-transparent text-white fw-bold py-4" type="button" data-bs-toggle="collapse" data-bs-target="#faq{{ $faq->id }}">
-                                    {{ $faq->question }}
+                                <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse" data-bs-target="#f1">
+                                    What is the 300% (3X) Multiplier Protocol?
                                 </button>
                             </h2>
-                            <div id="faq{{ $faq->id }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                                <div class="accordion-body text-muted pt-0 pb-4">
-                                    {!! nl2br(e($faq->answer)) !!}
+                            <div id="f1" class="accordion-collapse collapse" data-bs-parent="#mainFaqAccordion">
+                                <div class="accordion-body text-muted small">
+                                    Every active investment plan generates automated daily ROI up to a strict 300% (3X) total earning limit. When your cumulative earnings reach 3X the initial principal, the investment automatically concludes.
                                 </div>
                             </div>
                         </div>
-                        @empty
-                        <div class="p-4 text-center text-muted">
-                            <p>No FAQs available at the moment.</p>
+
+                        <div class="accordion-item border-bottom">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse" data-bs-target="#f2">
+                                    What cryptocurrencies are accepted?
+                                </button>
+                            </h2>
+                            <div id="f2" class="accordion-collapse collapse" data-bs-parent="#mainFaqAccordion">
+                                <div class="accordion-body text-muted small">
+                                    We primarily accept USDT on the TRON (TRC20) network for zero-volatility deposits, alongside multi-crypto automated processing via NOWPayments.
+                                </div>
+                            </div>
                         </div>
-                        @endforelse
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed fw-bold py-3" type="button" data-bs-toggle="collapse" data-bs-target="#f3">
+                                    How quickly are withdrawals processed?
+                                </button>
+                            </h2>
+                            <div id="f3" class="accordion-collapse collapse" data-bs-parent="#mainFaqAccordion">
+                                <div class="accordion-body text-muted small">
+                                    Withdrawals are reviewed and processed within standard business hours with a transparent 5% platform fee. The minimum withdrawal threshold is ${{ setting('min_withdrawal', 10) }}.
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Community CTA -->
-    @if(setting('community_button_enabled', '1') == '1')
-    <section class="py-5 bg-dark">
-        <div class="container py-4 text-center" data-aos="zoom-in">
-            <h2 class="fw-bold text-white mb-3"><i class="bi bi-chat-right-text text-info me-2"></i> Join Our Global Community</h2>
-            <p class="text-muted fs-5 mb-4 max-w-2xl mx-auto">Connect with thousands of investors, get real-time updates, and receive 24/7 support directly from our expert team.</p>
-            <a href="{{ setting('telegram_link') ?: setting('whatsapp_community_link', '#') }}" target="_blank" class="btn btn-info rounded-pill px-5 py-3 fs-5 fw-bold text-white shadow-lg btn-pulse" style="background: linear-gradient(135deg, #06b6d4, #3b82f6); border: none;">
-                {{ setting('community_button_text', 'Join Community Now') }}
-            </a>
-        </div>
-    </section>
-    @endif
 
     <!-- Footer -->
-    <footer class="bg-black py-5 border-top border-secondary border-opacity-25">
-        <div class="container text-center">
-            <div class="row mb-4 text-center text-md-start">
-                <div class="col-md-4 mb-4">
-                    <a class="navbar-brand fs-3 mb-3 d-inline-block" href="#">
-                        @if(setting('footer_logo'))
-                            <img src="{{ Storage::url(setting('footer_logo')) }}" alt="{{ setting('site_name', 'Logo') }}" style="height: 35px;">
-                        @elseif(setting('site_logo'))
-                            <img src="{{ Storage::url(setting('site_logo')) }}" alt="{{ setting('site_name', 'Logo') }}" style="height: 35px;">
-                        @else
-                            <i class="bi bi-layers-fill text-primary"></i> <span class="fw-bold text-white">CRYPTO</span><span class="fw-light text-white">INVEST</span>
+    <footer class="footer-fg">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-lg-5">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="navbar-brand-icon" style="width: 32px; height: 32px; font-size: 1rem;">
+                            <i class="bi bi-layers-fill"></i>
+                        </div>
+                        <span class="fs-4 fw-bold text-white font-heading">Future<span style="color: var(--fg-orange);">Growth</span></span>
+                    </div>
+                    <p class="small text-muted mb-3" style="max-width: 400px;">
+                        {{ setting('footer_text', 'FutureGrowth is an automated USDT investment ecosystem providing daily passive returns, 10-tier community rewards, and sustainable wealth creation.') }}
+                    </p>
+                </div>
+
+                <div class="col-6 col-lg-3">
+                    <h6 class="text-white fw-bold mb-3 text-uppercase text-xs">Quick Links</h6>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2"><a href="#plans" class="text-muted text-decoration-none">Investment Plans</a></li>
+                        <li class="mb-2"><a href="#referrals" class="text-muted text-decoration-none">10-Level Referral</a></li>
+                        <li class="mb-2"><a href="#salary" class="text-muted text-decoration-none">Leadership Salary</a></li>
+                        <li class="mb-2"><a href="{{ route('terms') }}" class="text-muted text-decoration-none">Terms of Service</a></li>
+                        <li class="mb-2"><a href="{{ route('privacy') }}" class="text-muted text-decoration-none">Privacy Policy</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-6 col-lg-4">
+                    <h6 class="text-white fw-bold mb-3 text-uppercase text-xs">Community & Support</h6>
+                    <p class="small text-muted mb-3">Connect directly with our administrators and global member community:</p>
+                    <div class="d-flex gap-2">
+                        @if(setting('whatsapp_community_link'))
+                            <a href="{{ setting('whatsapp_community_link') }}" target="_blank" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold">
+                                <i class="bi bi-whatsapp me-1"></i> WhatsApp
+                            </a>
                         @endif
-                    </a>
-                    <p class="text-muted small">Secure, Transparent, and Automated Cryptocurrency Investments.</p>
-                    <div class="d-flex gap-3 mt-3 justify-content-center justify-content-md-start">
-                        <a href="{{ setting('twitter_link', '#') }}" target="_blank" class="text-muted text-decoration-none hover-white"><i class="bi bi-twitter-x fs-5"></i></a>
-                        <a href="{{ setting('telegram_link', '#') }}" target="_blank" class="text-muted text-decoration-none hover-white"><i class="bi bi-telegram fs-5"></i></a>
-                        <a href="{{ setting('facebook_link', '#') }}" target="_blank" class="text-muted text-decoration-none hover-white"><i class="bi bi-facebook fs-5"></i></a>
-                        <a href="{{ setting('instagram_link', '#') }}" target="_blank" class="text-muted text-decoration-none hover-white"><i class="bi bi-instagram fs-5"></i></a>
-                        @if(setting('whatsapp_button_enabled') && setting('whatsapp_community_link'))
-                            <a href="{{ setting('whatsapp_community_link') }}" class="text-success text-decoration-none hover-white" target="_blank"><i class="bi bi-whatsapp fs-5"></i></a>
+                        @if(setting('telegram_link'))
+                            <a href="{{ setting('telegram_link') }}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold">
+                                <i class="bi bi-telegram me-1"></i> Telegram
+                            </a>
                         @endif
                     </div>
                 </div>
-                <div class="col-md-4 mb-4">
-                    <h5 class="text-white fw-bold mb-3">Quick Links</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{{ route('about') }}" class="text-muted text-decoration-none hover-white">About Us</a></li>
-                        <li class="mb-2"><a href="{{ route('about') }}" class="text-muted text-decoration-none hover-white">Document Center</a></li>
-                        <li class="mb-2"><a href="{{ route('contact') }}" class="text-muted text-decoration-none hover-white">Contact Support</a></li>
-                    </ul>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h5 class="text-white fw-bold mb-3">Legal</h5>
-                    <ul class="list-unstyled">
-                        <li class="mb-2"><a href="{{ route('terms') }}" class="text-muted text-decoration-none hover-white">Terms & Conditions</a></li>
-                        <li class="mb-2"><a href="{{ route('privacy') }}" class="text-muted text-decoration-none hover-white">Privacy Policy</a></li>
-                        <li class="mb-2"><a href="{{ route('risk') }}" class="text-muted text-decoration-none hover-white">Risk Disclosure</a></li>
-                    </ul>
-                </div>
             </div>
-            <div class="border-top border-secondary border-opacity-25 pt-4">
-                <p class="text-muted small mb-0">&copy; {{ date('Y') }} {{ setting('copyright_text', 'CryptoInvest Platform. All rights reserved.') }}</p>
+
+            <div class="pt-4 border-top border-secondary border-opacity-25 text-center text-muted small">
+                &copy; {{ date('Y') }} FutureGrowth.tech. All rights reserved. 300% (3X) Multiplier Protocol.
             </div>
         </div>
     </footer>
 
-    <style>
-        .hover-white:hover { color: white !important; transition: 0.3s; }
-    </style>
-
+    <!-- Bootstrap JS & AOS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/countup.js/2.0.0/countUp.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-engine@2/tsparticles.engine.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-basic@2/tsparticles.basic.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-interaction-particles-links@2/tsparticles.interaction.particles.links.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-move-base@2/tsparticles.move.base.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-shape-circle@2/tsparticles.shape.circle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-updater-color@2/tsparticles.updater.color.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-updater-opacity@2/tsparticles.updater.opacity.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tsparticles-updater-size@2/tsparticles.updater.size.min.js"></script>
-
     <script>
-        AOS.init({ duration: 800, once: true });
-        document.addEventListener('DOMContentLoaded', async function() {
-            document.querySelectorAll('.countup').forEach(el => {
-                new countUp.CountUp(el, parseFloat(el.getAttribute('data-val')), { duration: 2.5 }).start();
-            });
-            
-            // tsParticles for Hero
-            await loadBaseMover(tsParticles);
-            await loadCircleShape(tsParticles);
-            await loadColorUpdater(tsParticles);
-            await loadOpacityUpdater(tsParticles);
-            await loadSizeUpdater(tsParticles);
-            await loadParticlesLinksInteraction(tsParticles);
-            await loadBasic(tsParticles);
-
-            tsParticles.load("tsparticles", {
-                fpsLimit: 60,
-                particles: {
-                    number: { value: 80, density: { enable: true, value_area: 800 } },
-                    color: { value: ["#3b82f6", "#8b5cf6", "#10b981", "#38bdf8"] },
-                    links: { enable: true, color: "#3b82f6", distance: 150, opacity: 0.6, width: 2 },
-                    move: { enable: true, speed: 1.5, direction: "none", random: true, straight: false, outModes: { default: "bounce" } },
-                    size: { value: { min: 2, max: 5 } },
-                    opacity: { value: { min: 0.3, max: 0.8 }, animation: { enable: true, speed: 1, minimumValue: 0.3 } }
-                },
-                interactivity: {
-                    detectsOn: "canvas",
-                    events: { onHover: { enable: true, mode: "grab" }, resize: true },
-                    modes: { grab: { distance: 140, links: { opacity: 0.5 } } }
-                },
-                retina_detect: true
-            });
-        });
+        AOS.init({ duration: 700, once: true });
     </script>
 </body>
 </html>

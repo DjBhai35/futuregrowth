@@ -31,9 +31,11 @@
         <h2 class="fw-bold mb-1 text-warning"><i class="bi bi-shield-check me-2"></i> Command Center</h2>
         <p class="text-muted small">Platform-wide statistics, dynamic analytics, and administrative operations.</p>
     </div>
-    <div class="d-flex gap-2">
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{{ route('admin.transactions') }}" class="btn btn-outline-warning btn-sm"><i class="bi bi-journal-text"></i> Global Ledger</a>
+        <a href="{{ route('admin.roi-history') }}" class="btn btn-outline-info btn-sm"><i class="bi bi-graph-up"></i> ROI History</a>
         <a href="{{ route('admin.reports') }}" class="btn btn-outline-success btn-sm"><i class="bi bi-file-earmark-bar-graph"></i> Reports Console</a>
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-warning btn-sm fw-bold text-dark"><i class="bi bi-arrow-clockwise"></i> Refresh Dashboard</a>
+        <a href="{{ route('admin.dashboard') }}" class="btn btn-warning btn-sm fw-bold text-dark"><i class="bi bi-arrow-clockwise"></i> Refresh</a>
     </div>
 </div>
 

@@ -122,6 +122,13 @@ class DashboardController extends Controller
 
         $salaryEligibility = (new \App\Services\SalaryService())->calculateEligibility($user);
 
+        // Real platform activities for privacy-safe live activity ticker
+        $recentActivities = \App\Models\Transaction::with('user')
+            ->whereIn('status', ['approved', 'completed'])
+            ->latest()
+            ->take(8)
+            ->get();
+
         return view('dashboard.index', compact(
             'wallet', 
             'totalBalance', 
@@ -144,7 +151,8 @@ class DashboardController extends Controller
             'chartWiths',
             'chartRois',
             'chartRefs',
-            'salaryEligibility'
+            'salaryEligibility',
+            'recentActivities'
         ));
     }
 

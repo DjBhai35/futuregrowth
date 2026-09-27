@@ -2,664 +2,650 @@
 
 @section('content')
 <style>
-    /* Marquee Banner */
-    .promo-banner {
-        overflow: hidden;
-        white-space: nowrap;
-        background: linear-gradient(90deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1));
-        border: 1px solid rgba(59,130,246,0.2);
-        padding: 10px 0;
-        border-radius: 12px;
+    /* Metric Cards (Reference Theme Style) */
+    .metric-card {
+        background: #ffffff;
+        border-radius: 1.25rem;
+        border: 1px solid var(--fg-border);
+        padding: 1.25rem 1.5rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        height: 100%;
+    }
+
+    .metric-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(22, 163, 74, 0.25);
+        box-shadow: 0 12px 24px -4px rgba(22, 163, 74, 0.08);
+    }
+
+    .metric-label {
+        font-size: 0.8rem;
+        color: var(--fg-text-muted);
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+    }
+
+    .metric-value {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--fg-forest);
+        font-family: 'Outfit', sans-serif;
+        line-height: 1.1;
+        margin: 0;
+    }
+
+    .metric-icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+
+    .box-green {
+        background: #f0fdf4;
+        color: var(--fg-emerald);
+        border: 1px solid rgba(22, 163, 74, 0.2);
+    }
+
+    .box-orange {
+        background: #fff7ed;
+        color: var(--fg-orange);
+        border: 1px solid rgba(249, 115, 22, 0.2);
+    }
+
+    /* Circular Progress Meter Card (Reference Theme Center) */
+    .gauge-card {
+        background: #ffffff;
+        border-radius: 1.25rem;
+        border: 1px solid var(--fg-border);
+        padding: 1.75rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        height: 100%;
+    }
+
+    .gauge-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .running-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.3rem 0.85rem;
+        border-radius: 9999px;
+        background: #f0fdf4;
+        color: #16a34a;
+        border: 1px solid rgba(22, 163, 74, 0.25);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+    }
+
+    .running-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #16a34a;
+        box-shadow: 0 0 8px #16a34a;
+        animation: pulseDot 2s infinite;
+    }
+
+    /* Dual Arc Circular Gauge (SVG) */
+    .gauge-svg-wrap {
         position: relative;
+        width: 170px;
+        height: 170px;
+        margin: 0 auto;
     }
-    .marquee-content {
-        display: inline-block;
-        animation: marquee 25s linear infinite;
-        font-weight: 500;
-        font-size: 0.9rem;
-    }
-    @keyframes marquee {
-        0% { transform: translateX(100%); }
-        100% { transform: translateX(-100%); }
-    }
-    .marquee-item { display: inline-block; margin-right: 50px; }
-    
-    /* Premium Progress */
-    .progress-premium {
-        height: 14px;
-        background: rgba(0,0,0,0.3);
-        border-radius: 10px;
-        box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
-        overflow: visible;
-        position: relative;
-    }
-    .progress-bar-premium {
-        background: linear-gradient(90deg, #3b82f6, #06b6d4, #10b981);
-        background-size: 200% 200%;
-        border-radius: 10px;
-        position: relative;
-        box-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
-        animation: gradient-shift 3s ease infinite;
-        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .progress-bar-completed {
-        background: linear-gradient(90deg, #eab308, #fbbf24);
-        box-shadow: 0 0 15px rgba(234, 179, 8, 0.6);
-    }
-    .progress-bar-premium::after {
-        content: '';
+
+    .gauge-center-icon {
         position: absolute;
-        top: 0; left: 0; bottom: 0; right: 0;
-        background: linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent);
-        background-size: 1rem 1rem;
-        animation: progress-stripes 1s linear infinite;
-        border-radius: 10px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 2.25rem;
+        color: var(--fg-forest);
     }
-    @keyframes gradient-shift {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
+
+    /* Countdown Display */
+    .countdown-timer-box {
+        background: #f8fafc;
+        border: 1px solid var(--fg-border);
+        border-radius: 1rem;
+        padding: 0.75rem 1.25rem;
+        text-align: center;
+        margin-bottom: 1rem;
     }
-    @keyframes progress-stripes {
-        from { background-position: 1rem 0; }
-        to { background-position: 0 0; }
+
+    .countdown-digits {
+        font-size: 1.65rem;
+        font-weight: 900;
+        font-family: 'Outfit', monospace;
+        color: var(--fg-forest);
+        letter-spacing: 0.05em;
     }
-    
-    .wallet-card-sm {
-        transition: all 0.3s;
-        cursor: default;
+
+    /* Quick Action Cards (Reference Theme Bottom Row) */
+    .action-card {
+        background: #ffffff;
+        border-radius: 1.25rem;
+        border: 1px solid var(--fg-border);
+        padding: 1.25rem;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
     }
-    .wallet-card-sm:hover {
-        transform: translateY(-3px);
-        background: rgba(255,255,255,0.1) !important;
+
+    .action-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(22, 163, 74, 0.3);
+        box-shadow: 0 10px 24px -2px rgba(22, 163, 74, 0.1);
+        color: inherit;
+    }
+
+    .action-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        flex-shrink: 0;
+    }
+
+    .action-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--fg-forest);
+        margin-bottom: 0.15rem;
+    }
+
+    .action-desc {
+        font-size: 0.775rem;
+        color: var(--fg-text-muted);
+        margin: 0;
     }
 </style>
 
-<!-- Tech Particle Background for Dashboard -->
-<div id="tsparticles" class="position-fixed top-0 start-0 w-100 h-100" style="z-index: -2; opacity: 0.5;"></div>
+<!-- Top Row: 4 Metric Cards (Matching Reference Theme) -->
+<div class="row g-3 mb-4" data-aos="fade-down">
+    <!-- Card 1: Total Balance -->
+    <div class="col-6 col-lg-3">
+        <div class="metric-card">
+            <div>
+                <div class="metric-label">Total Balance</div>
+                <div class="metric-value font-monospace">${{ number_format($totalBalance ?? 0, 2) }}</div>
+            </div>
+            <div class="metric-icon-box box-green">
+                <i class="bi bi-wallet2"></i>
+            </div>
+        </div>
+    </div>
 
-<!-- Promotional Banner -->
-<div class="promo-banner mb-4 text-white" data-aos="fade-down">
-    <div class="marquee-content">
-        <span class="marquee-item"><i class="bi bi-gift text-warning me-1"></i> {{ setting('promo_banner_1', 'Free $' . setting('signup_bonus', 7) . ' Signup Bonus Available!') }}</span>
-        <span class="marquee-item"><i class="bi bi-award text-success me-1"></i> Monthly Leadership Salary: Unlock up to $300/month with direct qualifying members!</span>
-        <span class="marquee-item"><i class="bi bi-rocket-takeoff text-primary me-1"></i> {{ setting('promo_banner_2', 'Build Your Team & Earn up to 10 Levels of Rewards!') }}</span>
-        <span class="marquee-item"><i class="bi bi-graph-up-arrow text-success me-1"></i> {{ setting('promo_banner_3', 'Daily ROI Distributed Automatically Every 24 Hours.') }}</span>
-        <span class="marquee-item"><i class="bi bi-whatsapp text-success me-1"></i> {{ setting('promo_banner_4', 'Join our Official WhatsApp Community today!') }}</span>
+    <!-- Card 2: Total Invested -->
+    <div class="col-6 col-lg-3">
+        <div class="metric-card">
+            <div>
+                <div class="metric-label">Total Invested</div>
+                <div class="metric-value font-monospace text-orange" style="color: var(--fg-orange);">${{ number_format($activeInvestmentsSum ?? 0, 2) }}</div>
+            </div>
+            <div class="metric-icon-box box-orange">
+                <i class="bi bi-graph-up-arrow"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 3: Total Earnings -->
+    <div class="col-6 col-lg-3">
+        <div class="metric-card">
+            <div>
+                <div class="metric-label">Total Earnings</div>
+                <div class="metric-value font-monospace text-success">${{ number_format($totalEarnings ?? 0, 2) }}</div>
+            </div>
+            <div class="metric-icon-box box-green">
+                <i class="bi bi-cash-coin"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card 4: ROI Earned -->
+    <div class="col-6 col-lg-3">
+        <div class="metric-card">
+            <div>
+                <div class="metric-label">Daily ROI Earned</div>
+                <div class="metric-value font-monospace">${{ number_format($roiEarned ?? 0, 2) }}</div>
+            </div>
+            <div class="metric-icon-box box-orange">
+                <i class="bi bi-currency-dollar"></i>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Leadership Salary Quick Widget -->
-@if(isset($salaryEligibility))
-<div class="glass-card p-4 mb-4 border-success border-opacity-30 position-relative overflow-hidden" data-aos="fade-up" style="background: radial-gradient(circle at 95% 50%, rgba(16, 185, 129, 0.12), transparent 40%), rgba(15, 23, 42, 0.75);">
-    <div class="row align-items-center g-3">
-        <div class="col-lg-8 d-flex align-items-center gap-3">
-            <div class="rounded-circle p-3 bg-success bg-opacity-20 text-success border border-success border-opacity-40 d-flex align-items-center justify-content-center shrink-0" style="width: 54px; height: 54px;">
-                <i class="bi bi-award-fill fs-3"></i>
+<!-- Center Section: Active Investment Meter + Side Info & Chart (Matching Reference Theme) -->
+<div class="row g-4 mb-4">
+    <!-- Main Center Card: Active Investment Gauge -->
+    @php
+        $latestActiveInv = $activeInvestmentsList->first();
+        $hasActive = $latestActiveInv !== null;
+        $maxReturn = $hasActive ? ($latestActiveInv->amount * setting('investment_return_multiplier', 3)) : 0;
+        $earnedSoFar = $hasActive ? $latestActiveInv->total_earned : 0;
+        $progressPct = ($hasActive && $maxReturn > 0) ? min(100, round(($earnedSoFar / $maxReturn) * 100)) : 0;
+    @endphp
+
+    <div class="col-lg-6" data-aos="fade-right">
+        <div class="gauge-card">
+            <div class="gauge-header">
+                <h5 class="fw-bold font-heading mb-0 text-dark">
+                    <i class="bi bi-cpu-fill text-success me-2"></i> Active Investment
+                </h5>
+                @if($hasActive)
+                    <span class="running-badge">
+                        <span class="running-dot"></span> RUNNING
+                    </span>
+                @else
+                    <span class="badge bg-secondary rounded-pill px-3 py-1">INACTIVE</span>
+                @endif
+            </div>
+
+            <div class="row align-items-center g-4 my-2">
+                <!-- Dual Arc Circular Meter (Green & Orange) -->
+                <div class="col-sm-5 text-center">
+                    <div class="gauge-svg-wrap">
+                        <svg width="170" height="170" viewBox="0 0 170 170">
+                            <!-- Background Track -->
+                            <circle cx="85" cy="85" r="70" fill="none" stroke="#f1f5f9" stroke-width="12" stroke-dasharray="330 110" stroke-linecap="round" transform="rotate(135 85 85)" />
+                            <!-- Green Progress Arc -->
+                            <circle cx="85" cy="85" r="70" fill="none" stroke="url(#greenGrad)" stroke-width="12" 
+                                    stroke-dasharray="330 110" 
+                                    stroke-dashoffset="{{ 330 - (330 * ($progressPct / 100)) }}" 
+                                    stroke-linecap="round" transform="rotate(135 85 85)" style="transition: stroke-dashoffset 1s ease;" />
+                            <!-- Orange Decorative Arc -->
+                            <circle cx="85" cy="85" r="54" fill="none" stroke="#f97316" stroke-width="4" stroke-dasharray="120 180" stroke-linecap="round" transform="rotate(45 85 85)" opacity="0.8" />
+                            
+                            <defs>
+                                <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#16a34a" />
+                                    <stop offset="100%" stop-color="#22c55e" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="gauge-center-icon">
+                            <i class="bi {{ $hasActive ? 'bi-rocket-takeoff text-success' : 'bi-pause-circle text-muted' }}"></i>
+                        </div>
+                    </div>
+                    <span class="badge bg-light text-muted border rounded-pill px-3 py-1 mt-2 small fw-bold">
+                        {{ $progressPct }}% of 3X Multiplier Cap
+                    </span>
+                </div>
+
+                <!-- Next ROI Countdown & Investment Details -->
+                <div class="col-sm-7">
+                    <div class="countdown-timer-box">
+                        <small class="text-muted text-uppercase fw-bold text-xs d-block mb-1">Next Daily ROI Payout In</small>
+                        <div class="countdown-digits" id="roiCountdown">18 : 42 : 31</div>
+                        <div class="d-flex justify-content-between text-[10px] text-muted text-uppercase fw-bold px-2">
+                            <span>Hours</span>
+                            <span>Minutes</span>
+                            <span>Seconds</span>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <div class="d-flex justify-content-between mb-1 small">
+                            <span class="text-muted">Plan Name:</span>
+                            <span class="fw-bold text-dark">{{ $latestActiveInv ? ($latestActiveInv->plan->name ?? 'Standard') : 'No Active Plan' }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1 small">
+                            <span class="text-muted">Invested Amount:</span>
+                            <span class="fw-bold text-success font-monospace">${{ number_format($hasActive ? $latestActiveInv->amount : 0, 2) }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between small">
+                            <span class="text-muted">Daily Profit:</span>
+                            <span class="fw-bold text-orange font-monospace">
+                                ${{ number_format($hasActive ? (($latestActiveInv->amount * ($latestActiveInv->daily_roi_percent ?? 1)) / 100) : 0, 2) }} 
+                                ({{ $hasActive ? $latestActiveInv->daily_roi_percent : 0 }}%)
+                            </span>
+                        </div>
+                    </div>
+
+                    <a href="{{ route('dashboard.investments') }}" class="btn-fg-dark w-100 justify-content-center text-center py-2 text-decoration-none">
+                        <i class="bi bi-plus-circle me-1"></i> {{ $hasActive ? 'Upgrade / Add Investment' : 'Choose an Investment Plan' }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Side Cards: Earnings Overview Chart -->
+    <div class="col-lg-6" data-aos="fade-left">
+        <div class="gauge-card d-flex flex-column justify-content-between">
+            <div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold font-heading mb-0 text-dark">
+                        <i class="bi bi-graph-up text-primary me-2"></i> Earnings Overview
+                    </h5>
+                    <span class="badge bg-light text-muted border rounded-pill px-3 py-1 small">7 Days Live</span>
+                </div>
+                <p class="text-muted small mb-3">Real-time daily return trends and automated yields from active contracts.</p>
+
+                <!-- Chart Container -->
+                <div style="height: 190px;">
+                    <canvas id="earningsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Mini Summary Row -->
+            <div class="row g-2 pt-3 border-top mt-3">
+                <div class="col-4 text-center">
+                    <small class="text-muted text-xs d-block">Referral Bonus</small>
+                    <span class="fw-bold text-primary font-monospace">${{ number_format($referralCommission ?? 0, 2) }}</span>
+                </div>
+                <div class="col-4 text-center border-start border-end">
+                    <small class="text-muted text-xs d-block">Salary Balance</small>
+                    <span class="fw-bold text-warning font-monospace">${{ number_format($wallet->salary_balance ?? 0, 2) }}</span>
+                </div>
+                <div class="col-4 text-center">
+                    <small class="text-muted text-xs d-block">Deposit Wallet</small>
+                    <span class="fw-bold text-success font-monospace">${{ number_format($wallet->deposit_balance ?? 0, 2) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Row: 4 Quick Action Cards (Reference Theme Bottom Grid) -->
+<div class="row g-3 mb-4" data-aos="fade-up">
+    <!-- Action 1: Deposit -->
+    <div class="col-md-6 col-lg-3">
+        <a href="{{ route('dashboard.deposits') }}" class="action-card">
+            <div class="action-icon box-green">
+                <i class="bi bi-wallet2"></i>
             </div>
             <div>
-                <div class="d-flex align-items-center gap-2 mb-1">
-                    <span class="badge bg-success bg-opacity-20 text-success border border-success border-opacity-30 text-xs px-2 py-0.5 rounded-pill">
-                        {{ $salaryEligibility['qualified_level'] ? $salaryEligibility['qualified_level']->name : 'Leadership Salary' }}
-                    </span>
-                    <span class="text-muted small">Period: <strong class="text-white">{{ $salaryEligibility['current_period'] }}</strong></span>
-                </div>
-                <h5 class="fw-bold text-white mb-1">
-                    @if($salaryEligibility['qualified_level'])
-                        Qualifying for ${{ number_format($salaryEligibility['salary_amount'], 2) }} / month
-                    @else
-                        Unlock Up to $300 / Month Leadership Salary
-                    @endif
-                </h5>
-                <p class="text-muted small mb-0">
-                    You have <strong class="text-white">{{ $salaryEligibility['qualifying_directs'] }}</strong> qualifying direct members (with min $50 investment).
-                    @if($salaryEligibility['next_level'])
-                        Need <strong>{{ $salaryEligibility['needed_for_next_level'] }}</strong> more for {{ $salaryEligibility['next_level']->name }} (${{ number_format($salaryEligibility['next_level']->monthly_salary, 0) }}/mo).
-                    @endif
-                </p>
+                <div class="action-title">Deposit</div>
+                <p class="action-desc">Add funds to your deposit wallet</p>
             </div>
-        </div>
-        <div class="col-lg-4 text-lg-end">
-            <div class="d-flex flex-wrap gap-2 justify-content-lg-end">
-                @if($salaryEligibility['can_claim'])
-                    <form action="{{ route('dashboard.salary.claim') }}" method="POST">
+        </a>
+    </div>
+
+    <!-- Action 2: Invest Now -->
+    <div class="col-md-6 col-lg-3">
+        <a href="{{ route('dashboard.investments') }}" class="action-card">
+            <div class="action-icon box-orange">
+                <i class="bi bi-rocket-takeoff"></i>
+            </div>
+            <div>
+                <div class="action-title">Invest Now</div>
+                <p class="action-desc">Choose a plan & start earning</p>
+            </div>
+        </a>
+    </div>
+
+    <!-- Action 3: Withdraw -->
+    <div class="col-md-6 col-lg-3">
+        <a href="{{ route('dashboard.withdrawals') }}" class="action-card">
+            <div class="action-icon box-green">
+                <i class="bi bi-arrow-up-right-circle"></i>
+            </div>
+            <div>
+                <div class="action-title">Withdraw</div>
+                <p class="action-desc">Disburse your earnings to USDT</p>
+            </div>
+        </a>
+    </div>
+
+    <!-- Action 4: Transactions / Salary -->
+    <div class="col-md-6 col-lg-3">
+        <a href="{{ route('dashboard.history') }}" class="action-card">
+            <div class="action-icon box-orange">
+                <i class="bi bi-journal-text"></i>
+            </div>
+            <div>
+                <div class="action-title">Transactions</div>
+                <p class="action-desc">View full financial ledger</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Leadership Salary & Team Referral Career Banner -->
+<div class="row g-4 mb-4">
+    <!-- Salary Tier Progress Card -->
+    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="50">
+        <div class="gauge-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold font-heading mb-0 text-dark">
+                    <i class="bi bi-award-fill text-warning me-2"></i> Monthly Leadership Salary
+                </h5>
+                @if(isset($salaryEligibility) && $salaryEligibility['is_eligible'])
+                    <span class="badge bg-success rounded-pill px-3 py-1">QUALIFIED</span>
+                @else
+                    <span class="badge bg-light text-muted border rounded-pill px-3 py-1">IN PROGRESS</span>
+                @endif
+            </div>
+
+            <p class="text-muted small mb-3">
+                Earn up to <strong>$300/month</strong> recurring leadership salary with active qualifying direct members (min $50 active investment).
+            </p>
+
+            <div class="row g-3 mb-3">
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3 border">
+                        <small class="text-muted text-xs d-block text-uppercase fw-bold">Qualifying Directs</small>
+                        <h4 class="fw-bold text-dark font-monospace mb-0">{{ $salaryEligibility['qualifying_directs'] ?? 0 }} Members</h4>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-3 bg-light rounded-3 border">
+                        <small class="text-muted text-xs d-block text-uppercase fw-bold">Qualified Level</small>
+                        <h4 class="fw-bold text-success mb-0">
+                            {{ isset($salaryEligibility['qualified_level']) ? $salaryEligibility['qualified_level']->name : 'None' }}
+                            <small class="text-muted fs-6">(${{ isset($salaryEligibility['qualified_level']) ? number_format($salaryEligibility['qualified_level']->monthly_salary, 0) : 0 }}/mo)</small>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                @if(isset($salaryEligibility) && $salaryEligibility['can_claim'])
+                    <form action="{{ route('dashboard.salary.claim') }}" method="POST" class="w-100">
                         @csrf
-                        <button type="submit" class="btn btn-success btn-sm fw-bold px-3 py-2 rounded-pill shadow-sm">
-                            <i class="bi bi-wallet2 me-1"></i> Claim ${{ number_format($salaryEligibility['salary_amount'], 2) }} Now
+                        <button type="submit" class="btn btn-fg-orange w-100 fw-bold">
+                            <i class="bi bi-gift-fill me-1"></i> Claim Monthly Salary (${{ number_format($salaryEligibility['salary_amount'], 2) }})
                         </button>
                     </form>
-                @elseif($salaryEligibility['has_claimed_current_period'])
-                    <span class="badge bg-primary bg-opacity-20 text-primary border border-primary border-opacity-30 px-3 py-2 rounded-pill">
-                        <i class="bi bi-check-circle-fill me-1"></i> Claimed for {{ $salaryEligibility['current_period'] }}
-                    </span>
+                @else
+                    <a href="{{ route('dashboard.salary') }}" class="btn btn-outline-secondary rounded-pill w-100 fw-bold">
+                        <i class="bi bi-info-circle me-1"></i> View Salary Career Tiers
+                    </a>
                 @endif
-                <a href="{{ route('dashboard.salary') }}" class="btn btn-outline-light btn-sm px-3 py-2 rounded-pill">
-                    Salary Portal <i class="bi bi-arrow-right ms-1"></i>
-                </a>
             </div>
         </div>
+    </div>
+
+    <!-- Referral Team & Instant Link Card -->
+    <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="gauge-card h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold font-heading mb-0 text-dark">
+                    <i class="bi bi-people-fill text-primary me-2"></i> 10-Level Referral Matrix
+                </h5>
+                <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-1 fw-bold">20% Direct Reward</span>
+            </div>
+
+            <p class="text-muted small mb-3">
+                Share your personal link to earn instant 20% direct sponsor rewards plus 10 levels of multi-tier network commissions.
+            </p>
+
+            <div class="input-group mb-3">
+                <input type="text" class="form-control bg-light rounded-start-pill border font-monospace text-muted small" 
+                       value="{{ url('/register?ref=' . auth()->user()->referral_code) }}" id="refInput" readonly>
+                <button class="btn btn-fg-primary rounded-end-pill px-4 fw-bold" onclick="copyToClipboard(document.getElementById('refInput').value, this)">
+                    <i class="bi bi-clipboard me-1"></i> Copy Link
+                </button>
+            </div>
+
+            <div class="row g-2 text-center">
+                <div class="col-4">
+                    <div class="p-2 bg-light rounded-3 border">
+                        <small class="text-muted text-[11px] d-block text-uppercase">Direct Referrals</small>
+                        <span class="fw-bold font-monospace text-dark">{{ $directReferralsCount ?? 0 }}</span>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="p-2 bg-light rounded-3 border">
+                        <small class="text-muted text-[11px] d-block text-uppercase">Team Size (10 Lvl)</small>
+                        <span class="fw-bold font-monospace text-primary">{{ $teamSize ?? 0 }}</span>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="p-2 bg-light rounded-3 border">
+                        <small class="text-muted text-[11px] d-block text-uppercase">Team Business</small>
+                        <span class="fw-bold font-monospace text-success">${{ number_format($teamVolume ?? 0, 2) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Real Database Live Activity Ticker / Notifications -->
+@if(isset($recentActivities) && $recentActivities->isNotEmpty())
+<div class="gauge-card mb-4" data-aos="fade-up">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h6 class="fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+            <span class="running-dot"></span> Live Platform Activities (Real Database Events)
+        </h6>
+        <span class="badge bg-light text-muted border rounded-pill px-2 py-1 text-xs">Privacy-Preserved</span>
+    </div>
+
+    <div class="row g-2">
+        @foreach($recentActivities as $act)
+            @php
+                $uName = $act->user ? (substr($act->user->name, 0, 1) . '***' . substr($act->user->name, -1)) : 'Client';
+            @endphp
+            <div class="col-md-6 col-lg-3">
+                <div class="p-2 rounded-3 border bg-light d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="fw-bold small text-dark d-block">{{ $uName }}</span>
+                        <span class="text-muted text-[11px] text-capitalize">{{ $act->type }}</span>
+                    </div>
+                    <span class="fw-bold font-monospace small {{ in_array($act->type, ['deposit', 'roi', 'commission', 'salary']) ? 'text-success' : 'text-danger' }}">
+                        +${{ number_format($act->amount, 2) }}
+                    </span>
+                </div>
+            </div>
+        @endforeach
     </div>
 </div>
 @endif
 
-<div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-right">
-    <h2 class="fw-bold mb-0">Dashboard Overview</h2>
-    <div class="d-flex align-items-center gap-2">
-        @if(setting('whatsapp_button_enabled', '1') && setting('whatsapp_community_link'))
-            <a href="{{ setting('whatsapp_community_link') }}" target="_blank" class="btn btn-whatsapp rounded-pill px-4 fw-bold whatsapp-glow d-none d-md-inline-block">
-                <i class="bi bi-whatsapp me-2"></i> Join Community
-            </a>
-        @endif
-        <a href="{{ route('dashboard.investments') }}" class="btn btn-premium px-4"><i class="bi bi-rocket-takeoff me-2"></i> Invest Now</a>
-    </div>
-</div>
-
-<div class="row g-3 mb-4">
-    <!-- Row 1: Core Financials -->
-    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
-        <div class="glass-card p-3 position-relative neon-glow-primary overflow-hidden">
-            <p class="text-muted small fw-bold mb-1">Total Wallet Balance</p>
-            <h3 class="text-white fw-bold mb-0">$<span class="countup" data-val="{{ $totalBalance }}">{{ number_format($totalBalance, 2) }}</span></h3>
-            <i class="bi bi-wallet2 position-absolute top-50 end-0 translate-middle-y me-3 fs-1 text-primary opacity-25"></i>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
-        <div class="glass-card p-3 position-relative overflow-hidden">
-            <p class="text-muted small fw-bold mb-1">Total Deposits</p>
-            <h3 class="text-success fw-bold mb-0">$<span class="countup" data-val="{{ $totalDeposits }}">{{ number_format($totalDeposits, 2) }}</span></h3>
-            <i class="bi bi-arrow-down-circle position-absolute top-50 end-0 translate-middle-y me-3 fs-1 text-success opacity-25"></i>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
-        <div class="glass-card p-3 position-relative overflow-hidden">
-            <p class="text-muted small fw-bold mb-1">Total Withdrawals</p>
-            <h3 class="text-danger fw-bold mb-0">$<span class="countup" data-val="{{ $totalWithdrawals }}">{{ number_format($totalWithdrawals, 2) }}</span></h3>
-            <i class="bi bi-arrow-up-circle position-absolute top-50 end-0 translate-middle-y me-3 fs-1 text-danger opacity-25"></i>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
-        <div class="glass-card p-3 position-relative overflow-hidden">
-            <p class="text-muted small fw-bold mb-1">Total Earnings</p>
-            <h3 class="text-warning fw-bold mb-0">$<span class="countup" data-val="{{ $totalEarnings }}">{{ number_format($totalEarnings, 2) }}</span></h3>
-            <i class="bi bi-cash-stack position-absolute top-50 end-0 translate-middle-y me-3 fs-1 text-warning opacity-25"></i>
-        </div>
-    </div>
-</div>
-
-<div class="row g-3 mb-4">
-    <!-- Row 2: Investment & ROI metrics -->
-    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
-        <div class="glass-card p-3 position-relative overflow-hidden">
-            <p class="text-muted small fw-bold mb-1">Active Investments</p>
-            <h4 class="text-white fw-bold mb-0">$<span class="countup" data-val="{{ $activeInvestmentsSum }}">{{ number_format($activeInvestmentsSum, 2) }}</span></h4>
-            <i class="bi bi-activity position-absolute top-50 end-0 translate-middle-y me-3 fs-2 text-info opacity-25"></i>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
-        <div class="glass-card p-3 position-relative overflow-hidden">
-            <p class="text-muted small fw-bold mb-1">Completed Investments</p>
-            <h4 class="text-success fw-bold mb-0"><span class="countup" data-val="{{ $completedInvestmentsCount }}">{{ number_format($completedInvestmentsCount, 0) }}</span> <span class="fs-6 text-muted">(${{ number_format($completedInvestmentsSum, 0) }})</span></h4>
-            <i class="bi bi-patch-check position-absolute top-50 end-0 translate-middle-y me-3 fs-2 text-success opacity-25"></i>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="300">
-        <div class="glass-card p-3 position-relative overflow-hidden">
-            <p class="text-muted small fw-bold mb-1">ROI Earned</p>
-            <h4 class="text-warning fw-bold mb-0">$<span class="countup" data-val="{{ $roiEarned }}">{{ number_format($roiEarned, 2) }}</span></h4>
-            <i class="bi bi-graph-up-arrow position-absolute top-50 end-0 translate-middle-y me-3 fs-2 text-warning opacity-25"></i>
-        </div>
-    </div>
-    <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="400">
-        <div class="glass-card p-3 position-relative overflow-hidden">
-            <p class="text-muted small fw-bold mb-1">Referral Commission</p>
-            <h4 class="text-primary fw-bold mb-0">$<span class="countup" data-val="{{ $referralCommission }}">{{ number_format($referralCommission, 2) }}</span></h4>
-            <i class="bi bi-diagram-3 position-absolute top-50 end-0 translate-middle-y me-3 fs-2 text-primary opacity-25"></i>
-        </div>
-    </div>
-</div>
-
-<!-- Row 3: Team Metrics & Share Link -->
-<div class="row g-3 mb-4">
-    <div class="col-md-6" data-aos="fade-up" data-aos-delay="100">
-        <div class="glass-card p-3 position-relative overflow-hidden">
-            <p class="text-muted small fw-bold mb-1">Direct Referrals</p>
-            <h4 class="text-white fw-bold mb-0"><span class="countup" data-val="{{ $directReferralsCount }}">{{ number_format($directReferralsCount, 0) }}</span></h4>
-            <i class="bi bi-person-plus position-absolute top-50 end-0 translate-middle-y me-3 fs-2 text-info opacity-25"></i>
-        </div>
-    </div>
-    <div class="col-md-6" data-aos="fade-up" data-aos-delay="200">
-        <div class="glass-card p-3 position-relative overflow-hidden">
-            <p class="text-muted small fw-bold mb-1">Total Team Size (10 Levels)</p>
-            <h4 class="text-white fw-bold mb-0"><span class="countup" data-val="{{ $teamSize }}">{{ number_format($teamSize, 0) }}</span></h4>
-            <i class="bi bi-people position-absolute top-50 end-0 translate-middle-y me-3 fs-2 text-warning opacity-25"></i>
-        </div>
-    </div>
-</div>
-
-<!-- Investment Analytics -->
-<div class="row g-4 mb-4" data-aos="fade-up">
-    <div class="col-lg-8">
-        <div class="glass-card p-4 h-100 border-primary border-opacity-25 tech-bg-container">
-            <!-- Subtle Tech Background Effects -->
-            <div class="tech-grid-overlay"></div>
-            
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 position-relative gap-2">
-                <h5 class="fw-bold mb-0 text-white"><i class="bi bi-bar-chart-fill text-primary me-2"></i> Account Analytics Matrix</h5>
-                <div class="btn-group btn-group-sm" role="group">
-                    <button type="button" class="btn btn-outline-primary active" onclick="switchUserChart('invs')">Investments</button>
-                    <button type="button" class="btn btn-outline-primary" onclick="switchUserChart('deps')">Deposits</button>
-                    <button type="button" class="btn btn-outline-primary" onclick="switchUserChart('withs')">Withdrawals</button>
-                    <button type="button" class="btn btn-outline-primary" onclick="switchUserChart('rois')">ROI History</button>
-                    <button type="button" class="btn btn-outline-primary" onclick="switchUserChart('refs')">Referral Growth</button>
-                </div>
-            </div>
-            <div style="height: 280px; position: relative;">
-                <canvas id="userAnalyticsChart"></canvas>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4">
-        <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
-            <h5 class="fw-bold mb-4 text-white"><i class="bi bi-pie-chart-fill text-info me-2"></i> Portfolio Status</h5>
-            <div class="mb-3">
-                <div class="d-flex justify-content-between text-muted small mb-1"><span>Total Active Investments</span> <span class="text-white fw-bold">${{ number_format($activeInvestmentsSum, 2) }}</span></div>
-                <div class="progress" style="height: 6px;"><div class="progress-bar bg-success" style="width: {{ $activeInvestmentsSum > 0 ? 100 : 0 }}%"></div></div>
-            </div>
-            <div class="mb-3">
-                <div class="d-flex justify-content-between text-muted small mb-1"><span>Completed Investments</span> <span class="text-white fw-bold">${{ number_format($completedInvestmentsSum, 2) }}</span></div>
-                <div class="progress" style="height: 6px;"><div class="progress-bar bg-warning" style="width: {{ $completedInvestmentsSum > 0 ? 100 : 0 }}%"></div></div>
-            </div>
-            <div class="p-3 mt-3 rounded bg-dark border border-success border-opacity-25">
-                <p class="text-success small fw-bold mb-1"><i class="bi bi-graph-up-arrow me-1"></i> Total ROI Earned</p>
-                <h4 class="text-white fw-bold mb-0">$<span class="countup" data-val="{{ $roiEarned }}">{{ number_format($roiEarned, 2) }}</span></h4>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row g-4 mb-4">
-    <!-- Wallets Breakdown -->
-    <div class="col-lg-8" data-aos="fade-right">
-        <div class="glass-card p-4 h-100">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold mb-0 text-white"><i class="bi bi-safe2 text-primary me-2"></i> My Wallets</h5>
-                <div>
-                    <a href="{{ route('dashboard.deposits') }}" class="btn btn-sm btn-outline-success me-2 fw-bold"><i class="bi bi-arrow-down-circle"></i> Deposit</a>
-                    <a href="{{ route('dashboard.withdrawals') }}" class="btn btn-sm btn-outline-light fw-bold"><i class="bi bi-arrow-up-circle"></i> Withdraw</a>
-                </div>
-            </div>
-            
-            <div class="row g-3">
-                <div class="col-sm-6">
-                    <div class="wallet-card-sm p-3 rounded" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <p class="text-muted small mb-1">Deposit Wallet</p>
-                                <h4 class="mb-0 fw-bold text-white">$<span class="countup" data-val="{{ $wallet->deposit_balance }}">{{ number_format($wallet->deposit_balance, 2) }}</span></h4>
-                            </div>
-                            <i class="bi bi-box-arrow-in-down fs-1 text-muted opacity-50"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="wallet-card-sm p-3 rounded" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <p class="text-success small mb-1">ROI Wallet</p>
-                                <h4 class="text-success mb-0 fw-bold">$<span class="countup" data-val="{{ $wallet->roi_balance }}">{{ number_format($wallet->roi_balance, 2) }}</span></h4>
-                            </div>
-                            <i class="bi bi-graph-up fs-1 text-success opacity-50"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="wallet-card-sm p-3 rounded" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <p class="text-primary small mb-1">Referral Wallet</p>
-                                <h4 class="text-primary mb-0 fw-bold">$<span class="countup" data-val="{{ $wallet->referral_balance }}">{{ number_format($wallet->referral_balance, 2) }}</span></h4>
-                            </div>
-                            <i class="bi bi-people fs-1 text-primary opacity-50"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="wallet-card-sm p-3 rounded" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2);">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <p class="text-warning small mb-1">Bonus Wallet (Locked)</p>
-                                <h4 class="text-warning mb-0 fw-bold">$<span class="countup" data-val="{{ $wallet->bonus_balance }}">{{ number_format($wallet->bonus_balance, 2) }}</span></h4>
-                            </div>
-                            <i class="bi bi-lock fs-1 text-warning opacity-50"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3X Progress -->
-    <div class="col-lg-4" data-aos="fade-left">
-        <div class="glass-card p-4 h-100 position-relative border-primary border-opacity-25 neon-glow-primary">
-            <h5 class="fw-bold mb-4 text-white"><i class="bi bi-rocket-takeoff text-primary me-2"></i> Investment Progress (3X)</h5>
-            @forelse($activeInvestmentsList as $inv)
-                @php
-                    $multiplier = setting('enable_return_multiplier', 1) ? setting('investment_return_multiplier', 3) : 999;
-                    $maxReturn = $inv->amount * $multiplier;
-                    $percentage = min(100, ($inv->total_earned / $maxReturn) * 100);
-                @endphp
-                <div class="mb-4">
-                    <div class="d-flex justify-content-between small fw-bold mb-2">
-                        <span class="text-white">{{ $inv->plan->name }} (${{ number_format($inv->amount, 0) }})</span>
-                        @if($inv->status == 'completed')
-                            <span class="badge bg-warning text-dark"><i class="bi bi-star-fill me-1"></i> Completed</span>
-                        @elseif($inv->status == 'pending')
-                            <span class="badge bg-secondary text-white"><i class="bi bi-clock me-1"></i> Pending</span>
-                        @else
-                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-50"><i class="bi bi-activity me-1"></i> Active</span>
-                        @endif
-                    </div>
-                    <div class="progress progress-premium mb-2">
-                        <div class="progress-bar-premium {{ $percentage >= 100 ? 'progress-bar-completed' : '' }}" role="progressbar" style="width: 0%" data-target-width="{{ $percentage }}%">
-                            <span class="position-absolute end-0 me-2 text-white small fw-bold" style="line-height: 14px; text-shadow: 0 0 4px rgba(0,0,0,0.8);">{{ number_format($percentage, 1) }}%</span>
-                        </div>
-                    </div>
-                    <div class="d-flex justify-content-between">
-                        <small class="text-muted">Earned: <span class="text-white">${{ number_format($inv->total_earned, 2) }}</span></small>
-                        <small class="text-muted">Max: <span class="text-white">${{ number_format($maxReturn, 0) }}</span></small>
-                    </div>
-                </div>
-            @empty
-                <div class="text-center py-4">
-                    <i class="bi bi-inbox fs-1 text-muted mb-2 d-block"></i>
-                    <p class="text-muted small">No active investments found.</p>
-                    <a href="{{ route('dashboard.investments') }}" class="btn btn-sm btn-premium mt-2">Start Investing</a>
-                </div>
-            @endforelse
-        </div>
-    </div>
-</div>
-
-<div class="row g-4 mb-4">
-    <!-- Referral System -->
-    <div class="col-lg-4" data-aos="fade-up">
-        <div class="glass-card p-4 h-100">
-            <h5 class="fw-bold mb-3 text-white"><i class="bi bi-share-fill text-info me-2"></i> Referral Program</h5>
-            <p class="text-muted small mb-3">Share your link to earn up to 10 levels of commissions instantly!</p>
-            
-            <div class="input-group mb-3 shadow-sm">
-                <span class="input-group-text bg-dark border-secondary text-primary"><i class="bi bi-link-45deg"></i></span>
-                <input type="text" class="form-control bg-dark border-secondary text-white" value="{{ route('register') }}?ref={{ auth()->user()->referral_code }}" id="refLink" readonly>
-            </div>
-            
-            <div class="d-flex gap-2 mb-3">
-                <button class="btn btn-outline-light flex-grow-1" type="button" onclick="copyToClipboard(document.getElementById('refLink').value, this)">
-                    <i class="bi bi-copy"></i> Copy
-                </button>
-                <button class="btn btn-outline-info flex-grow-1 fw-bold" type="button" onclick="shareLink()">
-                    <i class="bi bi-share"></i> Share
-                </button>
-            </div>
-            <a href="#" class="btn btn-premium w-100 mb-4 fw-bold" onclick="copyToClipboard(document.getElementById('refLink').value, this)"><i class="bi bi-person-plus-fill"></i> Invite Friends Now</a>
-            
-            <div class="row g-2 mb-3">
-                <div class="col-6">
-                    <div class="p-2 rounded bg-dark border border-secondary text-center">
-                        <small class="text-muted d-block">Direct Referrals</small>
-                        <strong class="text-white">{{ $directReferralsCount }}</strong>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="p-2 rounded bg-dark border border-secondary text-center">
-                        <small class="text-muted d-block">Total Team Size</small>
-                        <strong class="text-white">{{ $teamSize }}</strong>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="p-2 rounded bg-dark border border-secondary text-center">
-                        <small class="text-muted d-block">Referral Income</small>
-                        <strong class="text-success">${{ number_format($wallet->referral_balance, 2) }}</strong>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="p-2 rounded bg-dark border border-secondary text-center">
-                        <small class="text-muted d-block">Team Volume</small>
-                        <strong class="text-info">${{ number_format($teamVolume, 2) }}</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Transactions -->
-    <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
-        <div class="glass-card p-4 h-100">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold mb-0 text-white"><i class="bi bi-clock-history text-secondary me-2"></i> Recent Activity</h5>
-                <a href="{{ route('dashboard.history') }}" class="btn btn-sm btn-outline-secondary">View All</a>
-            </div>
-            
-            <div class="table-responsive">
-                <table class="table table-dark table-hover mb-0 align-middle">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Amount</th>
-                            <th>Wallet</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($transactions as $tx)
-                        <tr>
-                            <td>
-                                @if($tx->type == 'deposit')
-                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1"><i class="bi bi-arrow-down me-1"></i> Deposit</span>
-                                @elseif($tx->type == 'withdrawal')
-                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1"><i class="bi bi-arrow-up me-1"></i> Withdrawal</span>
-                                @elseif($tx->type == 'roi')
-                                    <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25 px-2 py-1"><i class="bi bi-graph-up me-1"></i> ROI</span>
-                                @elseif($tx->type == 'commission')
-                                    <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2 py-1"><i class="bi bi-people me-1"></i> Commission</span>
-                                @else
-                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1"><i class="bi bi-gift me-1"></i> Bonus</span>
-                                @endif
-                            </td>
-                            <td class="fw-bold text-white">${{ number_format($tx->amount, 2) }}</td>
-                            <td class="text-muted small">{{ str_replace('_', ' ', Str::title($tx->wallet_type)) }}</td>
-                            <td>
-                                @if($tx->status == 'completed' || $tx->status == 'approved')
-                                    <span class="text-success small fw-bold"><i class="bi bi-check-circle-fill me-1"></i> Completed</span>
-                                @elseif($tx->status == 'pending')
-                                    <span class="text-warning small fw-bold"><i class="bi bi-clock-fill me-1"></i> Pending</span>
-                                @else
-                                    <span class="text-danger small fw-bold"><i class="bi bi-x-circle-fill me-1"></i> Rejected</span>
-                                @endif
-                            </td>
-                            <td class="text-muted small">{{ $tx->created_at->format('M d, H:i') }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="5" class="text-center text-muted py-5">
-                                <i class="bi bi-receipt fs-2 mb-2 d-block opacity-50"></i>
-                                No transactions found yet.
-                            </td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')
 <script>
-    let userChart;
-    const chartLabels = {!! json_encode($chartLabels) !!};
+    // Live Countdown Timer for Next ROI Cycle
+    function initCountdown() {
+        const timerEl = document.getElementById('roiCountdown');
+        if (!timerEl) return;
 
-    const userDatasets = {
-        invs: {
-            label: 'Investments Created ($)',
-            data: {!! json_encode($chartInvs) !!},
-            color: '#a855f7',
-            fillColor: 'rgba(168, 85, 247, 0.1)'
-        },
-        deps: {
-            label: 'Approved Deposits ($)',
-            data: {!! json_encode($chartDeps) !!},
-            color: '#10b981',
-            fillColor: 'rgba(16, 185, 129, 0.1)'
-        },
-        withs: {
-            label: 'Approved Withdrawals ($)',
-            data: {!! json_encode($chartWiths) !!},
-            color: '#ef4444',
-            fillColor: 'rgba(239, 68, 68, 0.1)'
-        },
-        rois: {
-            label: 'Daily ROI Earned ($)',
-            data: {!! json_encode($chartRois) !!},
-            color: '#eab308',
-            fillColor: 'rgba(234, 179, 8, 0.1)'
-        },
-        refs: {
-            label: 'Referral Commissions ($)',
-            data: {!! json_encode($chartRefs) !!},
-            color: '#3b82f6',
-            fillColor: 'rgba(59, 130, 246, 0.1)'
+        // Count down to next midnight UTC or next 24h interval
+        const now = new Date();
+        const nextTarget = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+
+        function update() {
+            const current = new Date();
+            let diff = Math.max(0, Math.floor((nextTarget - current) / 1000));
+
+            const hours = String(Math.floor(diff / 3600)).padStart(2, '0');
+            diff %= 3600;
+            const minutes = String(Math.floor(diff / 60)).padStart(2, '0');
+            const seconds = String(diff % 60).padStart(2, '0');
+
+            timerEl.textContent = `${hours} : ${minutes} : ${seconds}`;
         }
-    };
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize CountUp numbers
-        const countElements = document.querySelectorAll('.countup');
-        countElements.forEach(el => {
-            const val = parseFloat(el.getAttribute('data-val'));
-            const decimals = val % 1 !== 0 ? 2 : 0;
-            const countUpInst = new countUp.CountUp(el, val, {
-                decimalPlaces: decimals,
-                duration: 2,
-                useEasing: true,
-            });
-            if (!countUpInst.error) countUpInst.start();
-        });
+        update();
+        setInterval(update, 1000);
+    }
 
-        // Initialize user chart
-        const ctx = document.getElementById('userAnalyticsChart').getContext('2d');
-        userChart = new Chart(ctx, {
+    // Chart.js Smooth Earnings Wave Chart (Reference Theme Style)
+    function initEarningsChart() {
+        const ctx = document.getElementById('earningsChart');
+        if (!ctx) return;
+
+        const labels = {!! json_encode($chartLabels ?? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']) !!};
+        const dataRois = {!! json_encode($chartRois ?? [0, 0, 0, 0, 0, 0, 0]) !!};
+
+        new Chart(ctx, {
             type: 'line',
             data: {
-                labels: chartLabels,
+                labels: labels,
                 datasets: [{
-                    label: userDatasets.invs.label,
-                    data: userDatasets.invs.data,
-                    borderColor: userDatasets.invs.color,
-                    backgroundColor: userDatasets.invs.fillColor,
+                    label: 'Daily ROI ($)',
+                    data: dataRois,
+                    borderColor: '#f97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.08)',
                     borderWidth: 3,
-                    tension: 0.35,
                     fill: true,
-                    pointBackgroundColor: '#0f172a',
-                    pointBorderColor: userDatasets.invs.color,
+                    tension: 0.4,
+                    pointBackgroundColor: '#f97316',
+                    pointBorderColor: '#ffffff',
                     pointBorderWidth: 2,
-                    pointRadius: 4
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
-                    x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } }
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        padding: 10,
+                        cornerRadius: 8,
+                    }
                 },
-                interaction: { intersect: false, mode: 'index' }
+                scales: {
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8', font: { size: 11 } }
+                    },
+                    y: {
+                        grid: { color: '#f1f5f9' },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: { size: 11 },
+                            callback: function(val) { return '$' + val; }
+                        }
+                    }
+                }
             }
         });
-    });
-
-    function switchUserChart(key) {
-        // Remove active class from buttons
-        const buttons = document.querySelectorAll('.btn-group button');
-        buttons.forEach(btn => btn.classList.remove('active'));
-
-        // Add active class to clicked button
-        event.target.classList.add('active');
-
-        const activeSet = userDatasets[key];
-        userChart.data.datasets[0].label = activeSet.label;
-        userChart.data.datasets[0].data = activeSet.data;
-        userChart.data.datasets[0].borderColor = activeSet.color;
-        userChart.data.datasets[0].backgroundColor = activeSet.fillColor;
-        userChart.data.datasets[0].pointBorderColor = activeSet.color;
-        userChart.update();
     }
 
-    // Native Share API
-    function shareLink() {
-        const url = document.getElementById('refLink').value;
-        if (navigator.share) {
-            navigator.share({
-                title: 'Join my Crypto Team!',
-                text: 'Sign up using my referral link and get a free bonus.',
-                url: url,
-            }).then(() => {
-                // Show toast
-                const toastHtml = `
-                    <div class="toast show align-items-center text-white bg-info border-0" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body fw-bold"><i class="bi bi-share me-2"></i> Link Shared Successfully!</div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                        </div>
-                    </div>`;
-                document.querySelector('.toast-container').insertAdjacentHTML('beforeend', toastHtml);
-            }).catch((error) => console.log('Error sharing', error));
-        } else {
-            // Fallback to copy if native share not supported
-            copyToClipboard(url, document.querySelector('.btn-outline-info'));
-        }
-    }
-</script>
-
-<!-- tsParticles Engine -->
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-engine@2/tsparticles.engine.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-basic@2/tsparticles.basic.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-interaction-particles-links@2/tsparticles.interaction.particles.links.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-move-base@2/tsparticles.move.base.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-shape-circle@2/tsparticles.shape.circle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-updater-color@2/tsparticles.updater.color.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-updater-opacity@2/tsparticles.updater.opacity.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/tsparticles-updater-size@2/tsparticles.updater.size.min.js"></script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', async function () {
-        await loadBaseMover(tsParticles);
-        await loadCircleShape(tsParticles);
-        await loadColorUpdater(tsParticles);
-        await loadOpacityUpdater(tsParticles);
-        await loadSizeUpdater(tsParticles);
-        await loadParticlesLinksInteraction(tsParticles);
-        await loadBasic(tsParticles);
-
-        tsParticles.load("tsparticles", {
-            fpsLimit: 60,
-            particles: {
-                number: { value: 40, density: { enable: true, value_area: 800 } },
-                color: { value: ["#3b82f6", "#10b981", "#8b5cf6"] },
-                links: { enable: true, color: "#3b82f6", distance: 150, opacity: 0.15, width: 1 },
-                move: { enable: true, speed: 0.8, direction: "top", random: true, straight: false, outModes: { default: "out" } },
-                size: { value: { min: 1, max: 3 } },
-                opacity: { value: { min: 0.1, max: 0.3 } }
-            },
-            interactivity: {
-                detectsOn: "canvas",
-                events: { onHover: { enable: true, mode: "grab" }, resize: true },
-                modes: { grab: { distance: 140, links: { opacity: 0.3 } } }
-            },
-            retina_detect: true
-        });
+    document.addEventListener('DOMContentLoaded', function () {
+        initCountdown();
+        initEarningsChart();
     });
 </script>
 @endpush
