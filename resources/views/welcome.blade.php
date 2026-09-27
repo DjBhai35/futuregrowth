@@ -442,9 +442,28 @@
         /* Footer */
         .footer-fg {
             background: var(--fg-forest);
-            color: #cbd5e1;
+            color: #e2e8f0;
             padding: 4rem 0 2rem 0;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .footer-fg p,
+        .footer-fg .text-muted {
+            color: #cbd5e1 !important;
+        }
+
+        .footer-fg a.text-muted {
+            color: #cbd5e1 !important;
+            transition: color 0.2s ease, opacity 0.2s ease;
+        }
+
+        .footer-fg a.text-muted:hover {
+            color: #ffffff !important;
+            opacity: 1;
+        }
+
+        .footer-fg .footer-copyright {
+            color: #94a3b8 !important;
         }
     </style>
 </head>
@@ -941,7 +960,7 @@
                 </div>
             </div>
 
-            <div class="pt-4 border-top border-secondary border-opacity-25 text-center text-muted small">
+            <div class="pt-4 border-top border-light border-opacity-10 text-center text-muted small footer-copyright">
                 &copy; {{ date('Y') }} FutureGrowth.tech. All rights reserved. 300% (3X) Multiplier Protocol.
             </div>
         </div>
