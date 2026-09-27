@@ -224,50 +224,60 @@ class AdminController extends Controller
 
     public function approveDeposit($id)
     {
-        $deposit = Deposit::findOrFail($id);
-        if ($deposit->status !== 'pending') return back();
-        
-        $deposit->status = 'approved';
-        $deposit->save();
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($id) {
+            $deposit = Deposit::where('id', $id)->lockForUpdate()->firstOrFail();
+            if ($deposit->status !== 'pending') {
+                return back()->withErrors(['error' => 'Deposit is not pending or has already been processed.']);
+            }
+            
+            $deposit->status = 'approved';
+            $deposit->save();
 
-        $wallet = $deposit->user->wallet;
-        $wallet->deposit_balance += $deposit->amount;
-        $wallet->save();
+            $wallet = $deposit->user->wallet;
+            $wallet->deposit_balance += $deposit->amount;
+            $wallet->save();
 
-        ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'Approved deposit ID ' . $deposit->id . ' for user ' . $deposit->user->name,
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent()
-        ]);
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'Approved deposit ID ' . $deposit->id . ' for user ' . $deposit->user->name,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
 
-        \App\Models\Transaction::create([
-            'user_id' => $deposit->user_id,
-            'type' => 'deposit',
-            'amount' => $deposit->amount,
-            'wallet_type' => 'deposit_balance',
-            'status' => 'completed',
-            'description' => 'Deposit Approved. TXID: ' . $deposit->txid,
-            'reference_id' => $deposit->id
-        ]);
+            \App\Models\Transaction::create([
+                'user_id' => $deposit->user_id,
+                'type' => 'deposit',
+                'amount' => $deposit->amount,
+                'wallet_type' => 'deposit_balance',
+                'status' => 'completed',
+                'description' => 'Deposit Approved. TXID: ' . $deposit->txid,
+                'reference_id' => $deposit->id
+            ]);
 
-        return back()->with('success', 'Deposit approved successfully.');
+            return back()->with('success', 'Deposit approved successfully.');
+        });
     }
 
     public function rejectDeposit($id)
     {
-        $deposit = Deposit::findOrFail($id);
-        $deposit->status = 'rejected';
-        $deposit->save();
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($id) {
+            $deposit = Deposit::where('id', $id)->lockForUpdate()->firstOrFail();
+            if ($deposit->status !== 'pending') {
+                return back()->withErrors(['error' => 'Deposit is not pending or has already been processed.']);
+            }
 
-        ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'Rejected deposit ID ' . $deposit->id . ' for user ' . $deposit->user->name,
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent()
-        ]);
+            $deposit->status = 'rejected';
+            $deposit->save();
 
-        return back()->with('success', 'Deposit rejected.');
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'Rejected deposit ID ' . $deposit->id . ' for user ' . $deposit->user->name,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
+            ]);
+
+            return back()->with('success', 'Deposit rejected.');
+        });
     }
 
     public function withdrawals(Request $request)
@@ -297,54 +307,66 @@ class AdminController extends Controller
 
     public function approveWithdrawal($id)
     {
-        $withdrawal = Withdrawal::findOrFail($id);
-        $withdrawal->status = 'approved';
-        $withdrawal->save();
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($id) {
+            $withdrawal = Withdrawal::where('id', $id)->lockForUpdate()->firstOrFail();
+            if ($withdrawal->status !== 'pending') {
+                return back()->withErrors(['error' => 'Withdrawal is not pending or has already been processed.']);
+            }
 
-        \App\Models\Transaction::where('type', 'withdrawal')
-            ->where('reference_id', $withdrawal->id)
-            ->update([
-                'status' => 'completed',
-                'description' => 'Withdrawal approved. Sent to ' . $withdrawal->wallet_address
+            $withdrawal->status = 'approved';
+            $withdrawal->save();
+
+            \App\Models\Transaction::where('type', 'withdrawal')
+                ->where('reference_id', $withdrawal->id)
+                ->update([
+                    'status' => 'completed',
+                    'description' => 'Withdrawal approved. Sent to ' . $withdrawal->wallet_address
+                ]);
+
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'Approved withdrawal ID ' . $withdrawal->id . ' for user ' . $withdrawal->user->name,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
             ]);
 
-        ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'Approved withdrawal ID ' . $withdrawal->id . ' for user ' . $withdrawal->user->name,
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent()
-        ]);
-
-        return back()->with('success', 'Withdrawal approved.');
+            return back()->with('success', 'Withdrawal approved.');
+        });
     }
 
     public function rejectWithdrawal($id)
     {
-        $withdrawal = Withdrawal::findOrFail($id);
-        $withdrawal->status = 'rejected';
-        $withdrawal->save();
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($id) {
+            $withdrawal = Withdrawal::where('id', $id)->lockForUpdate()->firstOrFail();
+            if ($withdrawal->status !== 'pending') {
+                return back()->withErrors(['error' => 'Withdrawal is not pending or has already been refunded.']);
+            }
 
-        // Refund to dynamic wallet type
-        $wallet = $withdrawal->user->wallet;
-        $walletType = $withdrawal->wallet_type ?? 'roi_balance';
-        $wallet->$walletType += $withdrawal->amount;
-        $wallet->save();
+            $withdrawal->status = 'rejected';
+            $withdrawal->save();
 
-        \App\Models\Transaction::where('type', 'withdrawal')
-            ->where('reference_id', $withdrawal->id)
-            ->update([
-                'status' => 'rejected',
-                'description' => 'Withdrawal rejected and refunded'
+            // Refund to dynamic wallet type with strict duplicate protection
+            $wallet = $withdrawal->user->wallet;
+            $walletType = $withdrawal->wallet_type ?? 'roi_balance';
+            $wallet->$walletType += $withdrawal->amount;
+            $wallet->save();
+
+            \App\Models\Transaction::where('type', 'withdrawal')
+                ->where('reference_id', $withdrawal->id)
+                ->update([
+                    'status' => 'rejected',
+                    'description' => 'Withdrawal rejected and refunded'
+                ]);
+
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'Rejected withdrawal ID ' . $withdrawal->id . ' for user ' . $withdrawal->user->name,
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent()
             ]);
 
-        ActivityLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'Rejected withdrawal ID ' . $withdrawal->id . ' for user ' . $withdrawal->user->name,
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent()
-        ]);
-
-        return back()->with('success', 'Withdrawal rejected and refunded.');
+            return back()->with('success', 'Withdrawal rejected and refunded.');
+        });
     }
 
     public function users(Request $request)
