@@ -126,34 +126,36 @@ class NOWPaymentsController extends Controller
         $successStates = ['confirmed', 'sending', 'finished'];
         if (in_array($paymentStatus, $successStates)) {
             if ($deposit->status !== 'approved') {
-                $deposit->status = 'approved';
-                $deposit->save();
+                \Illuminate\Support\Facades\DB::transaction(function () use ($deposit, $paymentId, $request) {
+                    $deposit->status = 'approved';
+                    $deposit->save();
 
-                // Credit user wallet
-                $wallet = Wallet::where('user_id', $deposit->user_id)->first();
-                if ($wallet) {
-                    $wallet->deposit_balance += $deposit->amount;
-                    $wallet->save();
-                }
+                    // Credit user wallet
+                    $wallet = Wallet::where('user_id', $deposit->user_id)->first();
+                    if ($wallet) {
+                        $wallet->deposit_balance += $deposit->amount;
+                        $wallet->save();
+                    }
 
-                // Log Transaction
-                Transaction::create([
-                    'user_id' => $deposit->user_id,
-                    'type' => 'deposit',
-                    'amount' => $deposit->amount,
-                    'wallet_type' => 'deposit_balance',
-                    'status' => 'completed',
-                    'description' => 'Automatic USDT Deposit Approved via NOWPayments. ID: ' . $paymentId,
-                    'reference_id' => $deposit->id
-                ]);
+                    // Log Transaction
+                    Transaction::create([
+                        'user_id' => $deposit->user_id,
+                        'type' => 'deposit',
+                        'amount' => $deposit->amount,
+                        'wallet_type' => 'deposit_balance',
+                        'status' => 'completed',
+                        'description' => 'Automatic USDT Deposit Approved via NOWPayments. ID: ' . $paymentId,
+                        'reference_id' => $deposit->id
+                    ]);
 
-                // Log Activity
-                ActivityLog::create([
-                    'user_id' => $deposit->user_id,
-                    'action' => 'Automatic USDT Deposit approved via NOWPayments Webhook. ID: ' . $paymentId,
-                    'ip_address' => $request->ip(),
-                    'user_agent' => $request->userAgent()
-                ]);
+                    // Log Activity
+                    ActivityLog::create([
+                        'user_id' => $deposit->user_id,
+                        'action' => 'Automatic USDT Deposit approved via NOWPayments Webhook. ID: ' . $paymentId,
+                        'ip_address' => $request->ip(),
+                        'user_agent' => $request->userAgent()
+                    ]);
+                });
 
                 Log::info('Automatic Deposit successfully approved for User ID: ' . $deposit->user_id);
             }

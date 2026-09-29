@@ -43,32 +43,36 @@ class InvestmentController extends Controller
         $user = Auth::user();
         $wallet = $user->wallet;
 
-        // Deduct from deposit balance first, then bonus
-        if ($wallet->deposit_balance >= $amount) {
-            $wallet->deposit_balance -= $amount;
-        } elseif (($wallet->deposit_balance + $wallet->bonus_balance) >= $amount) {
-            $remaining = $amount - $wallet->deposit_balance;
-            $wallet->deposit_balance = 0;
-            $wallet->bonus_balance -= $remaining;
-        } else {
+        if (($wallet->deposit_balance + $wallet->bonus_balance) < $amount) {
             return back()->withErrors(['amount' => 'Insufficient funds.']);
         }
 
-        $wallet->save();
+        \Illuminate\Support\Facades\DB::transaction(function () use ($user, $wallet, $amount, $plan) {
+            // Deduct from deposit balance first, then bonus
+            if ($wallet->deposit_balance >= $amount) {
+                $wallet->deposit_balance -= $amount;
+            } else {
+                $remaining = $amount - $wallet->deposit_balance;
+                $wallet->deposit_balance = 0;
+                $wallet->bonus_balance -= $remaining;
+            }
 
-        // Calculate dynamic ROI percent for this user
-        $roiPercent = rand($plan->min_roi * 10, $plan->max_roi * 10) / 10;
+            $wallet->save();
 
-        Investment::create([
-            'user_id' => $user->id,
-            'plan_id' => $plan->id,
-            'amount' => $amount,
-            'daily_roi_percent' => $roiPercent,
-            'status' => 'active'
-        ]);
+            // Calculate dynamic ROI percent for this user
+            $roiPercent = rand($plan->min_roi * 10, $plan->max_roi * 10) / 10;
 
-        // Trigger referral multi-level commissions!
-        $this->referralService->distributeCommission($user, $amount);
+            Investment::create([
+                'user_id' => $user->id,
+                'plan_id' => $plan->id,
+                'amount' => $amount,
+                'daily_roi_percent' => $roiPercent,
+                'status' => 'active'
+            ]);
+
+            // Trigger referral multi-level commissions!
+            $this->referralService->distributeCommission($user, $amount);
+        });
 
         return redirect()->route('dashboard')->with('success', 'Investment activated successfully! Commissions distributed to team.');
     }

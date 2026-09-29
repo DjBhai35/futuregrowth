@@ -57,6 +57,7 @@
                     <select name="balance_type" class="form-select" required>
                         <option value="roi_balance">ROI Wallet (${{ number_format(auth()->user()->wallet ? auth()->user()->wallet->roi_balance : 0, 2) }})</option>
                         <option value="referral_balance">Referral Wallet (${{ number_format(auth()->user()->wallet ? auth()->user()->wallet->referral_balance : 0, 2) }})</option>
+                        <option value="salary_balance">Salary Wallet (${{ number_format(auth()->user()->wallet ? auth()->user()->wallet->salary_balance : 0, 2) }})</option>
                     </select>
                 </div>
 

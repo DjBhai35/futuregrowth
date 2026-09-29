@@ -18,7 +18,7 @@ class DashboardController extends Controller
         $wallet = $user->wallet;
         
         // 1. LIVE USER DASHBOARD CALCULATIONS
-        $totalBalance = $wallet->deposit_balance + $wallet->roi_balance + $wallet->referral_balance + $wallet->bonus_balance;
+        $totalBalance = $wallet->deposit_balance + $wallet->roi_balance + $wallet->referral_balance + $wallet->bonus_balance + ($wallet->salary_balance ?? 0);
         
         $totalDeposits = \App\Models\Deposit::where('user_id', $user->id)
             ->where('status', 'approved')
