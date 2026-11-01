@@ -892,7 +892,7 @@
                             </h2>
                             <div id="f2" class="accordion-collapse collapse" data-bs-parent="#mainFaqAccordion">
                                 <div class="accordion-body text-muted small">
-                                    We primarily accept USDT on the TRON (TRC20) network for zero-volatility deposits, alongside multi-crypto automated processing via NOWPayments.
+                                    We accept USDT on both the TRON (TRC20) and BNB Smart Chain (BEP20) networks for zero-volatility deposits. All deposits are manually verified and credited by our administration team.
                                 </div>
                             </div>
                         </div>
