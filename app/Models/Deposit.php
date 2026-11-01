@@ -10,6 +10,8 @@ class Deposit extends Model
         'user_id',
         'amount',
         'txid',
+        'network',
+        'proof_path',
         'status'
     ];
 

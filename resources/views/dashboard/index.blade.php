@@ -525,6 +525,32 @@
     </div>
 </div>
 
+{{-- Platform User Statistics --}}
+<div class="row g-3 mb-4" data-aos="fade-up" data-aos-delay="200">
+    <div class="col-md-6">
+        <div class="fg-card p-3 d-flex align-items-center gap-3">
+            <div class="rounded-circle bg-primary bg-opacity-10 d-flex align-items-center justify-content-center flex-shrink-0" style="width:48px;height:48px;">
+                <i class="bi bi-people-fill text-primary fs-4"></i>
+            </div>
+            <div>
+                <p class="text-muted small fw-bold mb-0">Total Members</p>
+                <h4 class="fw-bold mb-0 text-dark">{{ number_format($platformTotalUsers) }}</h4>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="fg-card p-3 d-flex align-items-center gap-3">
+            <div class="rounded-circle bg-success bg-opacity-10 d-flex align-items-center justify-content-center flex-shrink-0" style="width:48px;height:48px;">
+                <i class="bi bi-person-check-fill text-success fs-4"></i>
+            </div>
+            <div>
+                <p class="text-muted small fw-bold mb-0">Active Members</p>
+                <h4 class="fw-bold mb-0 text-success">{{ number_format($platformActiveUsers) }}</h4>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Real Database Live Activity Ticker / Notifications -->
 @if(isset($recentActivities) && $recentActivities->isNotEmpty())
 <div class="gauge-card mb-4" data-aos="fade-up">

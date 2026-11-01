@@ -6,7 +6,7 @@
         <h2 class="fw-bold mb-1 text-dark font-heading">
             <i class="bi bi-wallet2 text-success me-2"></i> Deposit Capital
         </h2>
-        <p class="text-muted small mb-0">Credit funds instantly into your Deposit Wallet via automated or manual USDT (TRC20/BEP20).</p>
+        <p class="text-muted small mb-0">Send USDT to the address below, then submit your transaction ID for administrator verification.</p>
     </div>
     <div class="d-flex gap-2">
         <a href="{{ route('dashboard.history', ['type' => 'deposit']) }}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
@@ -17,125 +17,117 @@
 
 <div class="row justify-content-center" data-aos="fade-up">
     <div class="col-lg-7 col-md-10">
-        <div class="fg-card p-4 p-md-5 shadow-sm border-emerald-500 border-opacity-30">
-            <div class="alert bg-success bg-opacity-10 border border-success border-opacity-25 text-dark small rounded-3 mb-4 d-flex align-items-center gap-2">
-                <i class="bi bi-shield-check text-success fs-5"></i>
-                <div>{{ setting('deposit_instructions', 'Only send USDT (TRC20/BEP20) to this address. Transactions verify automatically.') }}</div>
+        <div class="fg-card p-4 p-md-5 shadow-sm">
+
+            {{-- Important notice --}}
+            <div class="alert bg-warning bg-opacity-10 border border-warning border-opacity-25 text-dark small rounded-3 mb-4 d-flex align-items-center gap-2">
+                <i class="bi bi-info-circle-fill text-warning fs-5 flex-shrink-0"></i>
+                <div>
+                    <strong>Manual Deposit — Admin Approval Required.</strong><br>
+                    Send USDT to the address shown below, then submit your TXID. Your balance will be credited <strong>only after administrator approval</strong>. Do not send any currency other than USDT on the selected network.
+                </div>
             </div>
 
-            @php
-                $autoEnabled = setting('nowpayments_enabled', 1) == 1;
-                $autoMin = setting('nowpayments_min_deposit', setting('min_deposit', 25));
-                $autoMax = setting('nowpayments_max_deposit', setting('max_deposit', 50000));
-            @endphp
+            @if(!$trc20Enabled && !$bep20Enabled)
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    No deposit networks are currently enabled. Please contact support.
+                </div>
+            @else
 
-            @if($autoEnabled)
-            <ul class="nav nav-pills mb-4 nav-fill gap-2" id="depositTab" role="tablist">
+            {{-- Network selection tabs --}}
+            @if($trc20Enabled && $bep20Enabled)
+            <ul class="nav nav-pills mb-4 nav-fill gap-2" id="networkTab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active rounded-pill fw-bold py-2.5 px-3 border" id="auto-tab" data-bs-toggle="pill" data-bs-target="#auto-deposit" type="button" role="tab">
-                        <i class="bi bi-cpu-fill text-success me-1"></i> Instant Auto Gateway
+                    <button class="nav-link active rounded-pill fw-bold py-2 px-3 border" id="trc20-tab"
+                        data-bs-toggle="pill" data-bs-target="#trc20-panel" type="button" role="tab">
+                        <i class="bi bi-cpu text-success me-1"></i> USDT (TRC20)
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link rounded-pill fw-bold py-2.5 px-3 border" id="manual-tab" data-bs-toggle="pill" data-bs-target="#manual-deposit" type="button" role="tab">
-                        <i class="bi bi-qr-code text-warning me-1"></i> Direct Transfer
+                    <button class="nav-link rounded-pill fw-bold py-2 px-3 border" id="bep20-tab"
+                        data-bs-toggle="pill" data-bs-target="#bep20-panel" type="button" role="tab">
+                        <i class="bi bi-shield-fill-check text-warning me-1"></i> USDT (BEP20)
                     </button>
                 </li>
             </ul>
             @endif
 
-            <div class="tab-content" id="depositTabContent">
-                <!-- Automatic Deposit -->
-                @if($autoEnabled)
-                <div class="tab-pane fade show active" id="auto-deposit" role="tabpanel">
-                    <form action="{{ route('dashboard.deposits.nowpayments') }}" method="POST">
-                        @csrf
-                        
-                        @php
-                            $trc20Enabled = setting('nowpayments_enable_trc20', 1) == 1;
-                            $bep20Enabled = setting('nowpayments_enable_bep20', 1) == 1;
-                            $defaultNetwork = setting('nowpayments_default_network', 'trc20');
-                        @endphp
+            <div class="tab-content" id="networkTabContent">
 
-                        @if($trc20Enabled || $bep20Enabled)
-                        <div class="mb-4">
-                            <label class="form-label text-muted text-xs text-uppercase fw-bold">Select Network</label>
-                            <div class="d-flex gap-3">
-                                @if($trc20Enabled)
-                                <div class="form-check flex-grow-1 p-0">
-                                    <input type="radio" class="btn-check" name="network" id="net-trc20" value="trc20" {{ $defaultNetwork === 'trc20' || !$bep20Enabled ? 'checked' : '' }} required>
-                                    <label class="btn btn-outline-success w-100 py-2.5 rounded-3 fw-bold" for="net-trc20">
-                                        <i class="bi bi-cpu me-1"></i> USDT (TRC20)
-                                    </label>
-                                </div>
-                                @endif
-                                @if($bep20Enabled)
-                                <div class="form-check flex-grow-1 p-0">
-                                    <input type="radio" class="btn-check" name="network" id="net-bep20" value="bep20" {{ $defaultNetwork === 'bep20' || !$trc20Enabled ? 'checked' : '' }} required>
-                                    <label class="btn btn-outline-warning w-100 py-2.5 rounded-3 fw-bold" for="net-bep20">
-                                        <i class="bi bi-shield-fill-check me-1"></i> USDT (BEP20)
-                                    </label>
-                                </div>
-                                @endif
-                            </div>
-                        </div>
-                        @else
-                        <div class="alert alert-danger mb-4">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i> No USDT networks are currently enabled by administrator.
-                        </div>
+                {{-- TRC20 Panel --}}
+                @if($trc20Enabled)
+                <div class="tab-pane fade {{ $trc20Enabled ? 'show active' : '' }}" id="trc20-panel" role="tabpanel">
+                    <div class="mb-4 text-center p-4 rounded-4 bg-light border">
+                        @if($trc20Address)
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode($trc20Address) }}&color=062810&bgcolor=f8fafc"
+                            class="img-fluid rounded-3 mb-3 border shadow-sm" alt="TRC20 QR Code">
                         @endif
-
-                        <div class="mb-4">
-                            <label class="form-label text-muted text-xs text-uppercase fw-bold">
-                                Deposit Amount (USD) <span class="text-success fw-normal">(Min: ${{ $autoMin }} | Max: ${{ $autoMax }})</span>
-                            </label>
-                            <div class="input-group shadow-sm">
-                                <span class="input-group-text bg-light text-muted fw-bold">$</span>
-                                <input type="number" step="0.01" min="{{ $autoMin }}" max="{{ $autoMax }}" name="amount" class="form-control" placeholder="Enter amount to deposit..." required>
-                            </div>
-                            <small class="text-muted mt-2 d-block"><i class="bi bi-shield-check text-success me-1"></i> Automated gateway via NOWPayments. Instant on-chain confirmation.</small>
+                        <h6 class="text-muted text-uppercase text-xs fw-bold mb-2">
+                            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2">USDT (TRC20) — Tron Network</span>
+                        </h6>
+                        <div class="input-group mt-2">
+                            <input type="text" class="form-control text-center font-monospace bg-white"
+                                value="{{ $trc20Address ?: 'Address not configured — contact admin' }}"
+                                id="trc20Addr" readonly>
+                            @if($trc20Address)
+                            <button class="btn btn-outline-success" type="button"
+                                onclick="navigator.clipboard.writeText('{{ $trc20Address }}').then(()=>{this.innerHTML='<i class=\'bi bi-check2\'></i>';setTimeout(()=>{this.innerHTML='<i class=\'bi bi-copy\'></i>'},2000)})">
+                                <i class="bi bi-copy"></i>
+                            </button>
+                            @endif
                         </div>
-                        <button type="submit" class="btn btn-fg-primary w-100 py-2.5 fw-bold shadow-md">
-                            <i class="bi bi-lightning-charge me-1"></i> Proceed to Payment Gateway
-                        </button>
+                        <small class="text-danger fw-bold d-block mt-2">
+                            ⚠ Only send USDT on the TRC20 (Tron) network. Sending on wrong network will result in permanent loss.
+                        </small>
+                    </div>
+
+                    <form action="{{ route('dashboard.deposits.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <input type="hidden" name="network" value="trc20">
+                        @include('dashboard.deposits._form', ['min' => $minDeposit, 'max' => $maxDeposit])
                     </form>
                 </div>
                 @endif
 
-                <!-- Manual Deposit -->
-                <div class="tab-pane fade {{ !$autoEnabled ? 'show active' : '' }}" id="manual-deposit" role="tabpanel">
+                {{-- BEP20 Panel --}}
+                @if($bep20Enabled)
+                <div class="tab-pane fade {{ !$trc20Enabled ? 'show active' : '' }}" id="bep20-panel" role="tabpanel">
                     <div class="mb-4 text-center p-4 rounded-4 bg-light border">
-                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ $adminAddress }}&color=062810&bgcolor=f8fafc" class="img-fluid rounded-3 mb-3 border shadow-sm" alt="QR Code">
-                        <h6 class="text-muted text-uppercase text-xs fw-bold mb-1">Company USDT (TRC20) Deposit Address</h6>
-                        <div class="input-group">
-                            <input type="text" class="form-control text-center font-monospace bg-white" value="{{ $adminAddress }}" id="walletAddr" readonly>
-                            <button class="btn btn-outline-success" type="button" onclick="navigator.clipboard.writeText('{{ $adminAddress }}'); alert('Address copied to clipboard!');">
+                        @if($bep20Address)
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data={{ urlencode($bep20Address) }}&color=062810&bgcolor=f8fafc"
+                            class="img-fluid rounded-3 mb-3 border shadow-sm" alt="BEP20 QR Code">
+                        @endif
+                        <h6 class="text-muted text-uppercase text-xs fw-bold mb-2">
+                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2">USDT (BEP20) — BNB Smart Chain</span>
+                        </h6>
+                        <div class="input-group mt-2">
+                            <input type="text" class="form-control text-center font-monospace bg-white"
+                                value="{{ $bep20Address ?: 'Address not configured — contact admin' }}"
+                                id="bep20Addr" readonly>
+                            @if($bep20Address)
+                            <button class="btn btn-outline-warning" type="button"
+                                onclick="navigator.clipboard.writeText('{{ $bep20Address }}').then(()=>{this.innerHTML='<i class=\'bi bi-check2\'></i>';setTimeout(()=>{this.innerHTML='<i class=\'bi bi-copy\'></i>'},2000)})">
                                 <i class="bi bi-copy"></i>
                             </button>
+                            @endif
                         </div>
+                        <small class="text-danger fw-bold d-block mt-2">
+                            ⚠ Only send USDT on BEP20 (BNB Smart Chain). Sending on wrong network will result in permanent loss.
+                        </small>
                     </div>
 
-                    <form action="{{ route('dashboard.deposits.store') }}" method="POST">
+                    <form action="{{ route('dashboard.deposits.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        <div class="mb-3">
-                            <label class="form-label text-muted text-xs text-uppercase fw-bold">
-                                Deposit Amount (USD) <span class="text-success fw-normal">(Min: ${{ setting('min_deposit', 25) }} | Max: ${{ setting('max_deposit', 50000) }})</span>
-                            </label>
-                            <div class="input-group shadow-sm">
-                                <span class="input-group-text bg-light text-muted fw-bold">$</span>
-                                <input type="number" step="0.01" min="{{ setting('min_deposit', 25) }}" max="{{ setting('max_deposit', 50000) }}" name="amount" class="form-control" required placeholder="Amount transferred">
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label text-muted text-xs text-uppercase fw-bold">Transaction Hash (TXID)</label>
-                            <input type="text" name="txid" class="form-control font-monospace" placeholder="Enter the 64-character hash from your wallet" required>
-                        </div>
-                        <button type="submit" class="btn btn-fg-primary w-100 py-2.5 fw-bold shadow-md">
-                            <i class="bi bi-check2-circle me-1"></i> Submit Deposit for Verification
-                        </button>
+                        <input type="hidden" name="network" value="bep20">
+                        @include('dashboard.deposits._form', ['min' => $minDeposit, 'max' => $maxDeposit])
                     </form>
                 </div>
+                @endif
+
             </div>
+            @endif
+
         </div>
     </div>
 </div>

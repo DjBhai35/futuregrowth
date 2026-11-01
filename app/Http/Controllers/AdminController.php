@@ -218,6 +218,10 @@ class AdminController extends Controller
             $query->where('status', $request->status);
         }
 
+        if ($request->filled('network')) {
+            $query->where('network', $request->network);
+        }
+
         $deposits = $query->latest()->paginate(20)->withQueryString();
         return view('admin.deposits', compact('deposits'));
     }

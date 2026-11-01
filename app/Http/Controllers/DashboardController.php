@@ -120,6 +120,10 @@ class DashboardController extends Controller
                 ->sum('amount');
         }
 
+        // Platform-wide user statistics
+        $platformTotalUsers  = \App\Models\User::count();
+        $platformActiveUsers = \App\Models\User::where('status', 'active')->count();
+
         $salaryEligibility = (new \App\Services\SalaryService())->calculateEligibility($user);
 
         // Real platform activities for privacy-safe live activity ticker
@@ -152,7 +156,9 @@ class DashboardController extends Controller
             'chartRois',
             'chartRefs',
             'salaryEligibility',
-            'recentActivities'
+            'recentActivities',
+            'platformTotalUsers',
+            'platformActiveUsers'
         ));
     }
 

@@ -357,6 +357,42 @@
                     </div>
                 </div>
 
+                <h5 class="fw-bold mb-3 text-success border-bottom border-secondary pb-2"><i class="bi bi-wallet2 me-1"></i> Manual Deposit Settings (USDT)</h5>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label text-muted small fw-bold">Enable TRC20 Deposits</label>
+                        <select name="manual_trc20_enabled" class="form-control bg-dark border-secondary text-white">
+                            <option value="1" {{ setting('manual_trc20_enabled', 1) == 1 ? 'selected' : '' }}>Enabled</option>
+                            <option value="0" {{ setting('manual_trc20_enabled', 1) == 0 ? 'selected' : '' }}>Disabled</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-muted small fw-bold">Enable BEP20 Deposits</label>
+                        <select name="manual_bep20_enabled" class="form-control bg-dark border-secondary text-white">
+                            <option value="1" {{ setting('manual_bep20_enabled', 1) == 1 ? 'selected' : '' }}>Enabled</option>
+                            <option value="0" {{ setting('manual_bep20_enabled', 1) == 0 ? 'selected' : '' }}>Disabled</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small fw-bold">USDT TRC20 Wallet Address</label>
+                        <input type="text" name="manual_trc20_address" class="form-control bg-dark border-secondary text-white font-monospace"
+                            value="{{ setting('manual_trc20_address', '') }}" placeholder="T... (Tron TRC20 address)">
+                        <div class="form-text text-muted small">Tron network address starting with T</div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small fw-bold">USDT BEP20 Wallet Address</label>
+                        <input type="text" name="manual_bep20_address" class="form-control bg-dark border-secondary text-white font-monospace"
+                            value="{{ setting('manual_bep20_address', '') }}" placeholder="0x... (BNB Smart Chain address)">
+                        <div class="form-text text-muted small">BNB Smart Chain address starting with 0x</div>
+                    </div>
+                    <div class="col-12">
+                        <div class="alert alert-warning bg-opacity-10 border-warning text-dark small rounded-3 mb-0 d-flex gap-2">
+                            <i class="bi bi-shield-exclamation flex-shrink-0 mt-1"></i>
+                            <span>These wallet addresses are loaded dynamically. Never share private keys or seed phrases. Balances are credited manually only after admin approval.</span>
+                        </div>
+                    </div>
+                </div>
+
                 <h5 class="fw-bold mb-3 text-warning border-bottom border-secondary pb-2">Security, Maintenance & 2FA</h5>
                 <div class="row g-3 mb-4">
                     <div class="col-md-4">
